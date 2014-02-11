@@ -33,10 +33,31 @@ window.onload = function()
 
     // grid initialization
     var gameGrid = new grid(gridWidth, gridHeight, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize);
-    var testX = 8;
-    var testY = 8;
+    var pacmanPosX = 13;
+    var pacmanPosY = 23;
 
-    var myInterval = setInterval(animate, 1000/1);
+    window.addEventListener("keydown", check, true);
+    function check(e) {
+        if(e.keyCode == 38 && pacmanPosY > 1) // top
+        {
+            if(gameGrid.tab[pacmanPosY-2][pacmanPosX-1] != 1 && pacmanPosY >= 2)
+                pacmanPosY--;  
+        } else if(e.keyCode == 37) // left
+        {
+            if(gameGrid.tab[pacmanPosY-1][pacmanPosX-2] != 1 && pacmanPosX-2 != -1)
+                pacmanPosX--;            
+        } else if(e.keyCode == 39) // right
+        {
+            if(gameGrid.tab[pacmanPosY-1][pacmanPosX] != 1 && pacmanPosX != columnsNumber)
+                pacmanPosX++;
+        } else if(e.keyCode == 40) // bottom
+        {
+            if(gameGrid.tab[pacmanPosY][pacmanPosX-1] != 1 && pacmanPosX+1 != linesNumber)
+                pacmanPosY++;  
+        }
+    }
+
+    var myInterval = setInterval(animate, 1000/30);
     function animate()
     {
     	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -46,6 +67,8 @@ window.onload = function()
         // draw grid
         gridGenerator(gameGrid,context);
         // draw PacMan
-        pacmanGenerator(pacmanObject,context,13,23);
+        pacmanGenerator(pacmanObject,context,pacmanPosX,pacmanPosY);
+        
+        
 	}
 };
