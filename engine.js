@@ -36,7 +36,7 @@ window.onload = function()
     var testX = 8;
     var testY = 8;
 
-    var myInterval = setInterval(animate, 1000/2);
+    var myInterval = setInterval(animate, 1000/1);
     function animate()
     {
     	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -45,8 +45,7 @@ window.onload = function()
 
         // draw grid
         gridGenerator(gameGrid,context);
-        
         // draw PacMan
-        pacmanGenerator(pacman,context,18,13);
+        pacmanGenerator(pacmanObject,context,13,23);
 	}
 };
