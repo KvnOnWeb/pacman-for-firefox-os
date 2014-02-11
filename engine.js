@@ -16,15 +16,15 @@ window.onload = function()
     }
 
     // Set of canvas size
-    canvas.width = 320;
-    canvas.height = 480;
+    canvas.width = 520;
+    canvas.height = 580;
 
     // Variables set
     var squareSize = 20;
     var littleFoodSize = 2;
     var bigFoodSize = 4;
-    var linesNumber = 16;
-    var columnsNumber = 16;
+    var linesNumber = 29;
+    var columnsNumber = 26;
 
     // grid initialization
     var grille = new grid(1);
@@ -38,7 +38,7 @@ window.onload = function()
 
 
 	    context.fillStyle = "#000000"; // bg color
-	    context.fillRect(0,0,320,480);
+	    context.fillRect(0,0,480,480);
 	    // grid generation
 	    for(y=0;y<linesNumber;y++) // for each lines
 	    {
