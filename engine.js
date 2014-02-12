@@ -39,7 +39,6 @@ window.onload = function()
     // add event listener for keyboard
     window.addEventListener("keydown", pacmanDirection, true);
 
-    var myInterval = setInterval(animate, 1000/30);
     function animate()
     {
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -49,10 +48,14 @@ window.onload = function()
         // draw grid
         gridGenerator(gameGrid,context);
         // draw PacMan
-        pacmanGenerator(pacmanObject,context,pacmanPosX,pacmanPosY);        
+        pacmanGenerator(pacmanObject,context,pacmanPosX,pacmanPosY);   
+        // next start of animage()
+        window.requestAnimFrame(function() { animate()});     
 	}
 
-    // list of functions
+    animate(); // first start
+
+    // function called when user press key
     function pacmanDirection (e) {
         if(e.keyCode == 38 && pacmanPosY > 1) // top
         {
@@ -72,4 +75,18 @@ window.onload = function()
                 pacmanPosY++;  
         }
     }
+  
 };
+
+/* list of functions */
+// refresh canvas for animation
+window.requestAnimFrame = (function(){
+    return window.requestAnimationFrame    || // La forme standardisée
+        window.webkitRequestAnimationFrame || // Pour Chrome et Safari
+        window.mozRequestAnimationFrame    || // Pour Firefox
+        window.oRequestAnimationFrame      || // Pour Opera
+        window.msRequestAnimationFrame     || // Pour Internet Explorer
+        function(callback){                   // Pour les élèves du dernier rang
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
