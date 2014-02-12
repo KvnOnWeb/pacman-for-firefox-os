@@ -32,7 +32,7 @@ window.onload = function()
     var pacmanObject = new pacman(10,20);
 
     // grid initialization
-    var gameGrid = new grid(gridWidth, gridHeight, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize);
+    var gameGrid = new Grid(gridWidth, gridHeight, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize);
     var pacmanPosX = 13;
     var pacmanPosY = 23;
 

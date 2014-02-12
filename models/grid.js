@@ -1,5 +1,5 @@
 
-function grid (width, height, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize)
+function Grid (width, height, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize)
 {
 	this.width = width;
 	this.height = height;
