@@ -1,13 +1,13 @@
 window.onload = function()
 {
-	// Récupération du canvas
+	// Recovery of canvas
     var canvas = document.getElementById('grid');
     if(!canvas)
     {
         alert("Impossible de récupérer le canvas");
         return;
     }
-    // Récupération du context
+    // Recovery of context
     var context = canvas.getContext('2d');
     if(!context)
     {
@@ -36,8 +36,24 @@ window.onload = function()
     var pacmanPosX = 13;
     var pacmanPosY = 23;
 
-    window.addEventListener("keydown", check, true);
-    function check(e) {
+    // add event listener for keyboard
+    window.addEventListener("keydown", pacmanDirection, true);
+
+    var myInterval = setInterval(animate, 1000/30);
+    function animate()
+    {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#000000"; // bg color
+        context.fillRect(0, 0, gridWidth, gridHeight);
+
+        // draw grid
+        gridGenerator(gameGrid,context);
+        // draw PacMan
+        pacmanGenerator(pacmanObject,context,pacmanPosX,pacmanPosY);        
+	}
+
+    // list of functions
+    function pacmanDirection (e) {
         if(e.keyCode == 38 && pacmanPosY > 1) // top
         {
             if(gameGrid.tab[pacmanPosY-2][pacmanPosX-1] != 1 && pacmanPosY >= 2)
@@ -50,25 +66,10 @@ window.onload = function()
         {
             if(gameGrid.tab[pacmanPosY-1][pacmanPosX] != 1 && pacmanPosX != columnsNumber)
                 pacmanPosX++;
-        } else if(e.keyCode == 40) // bottom
+        } else if(e.keyCode == 40 && pacmanPosY <= linesNumber-1) // bottom
         {
             if(gameGrid.tab[pacmanPosY][pacmanPosX-1] != 1 && pacmanPosX+1 != linesNumber)
                 pacmanPosY++;  
         }
     }
-
-    var myInterval = setInterval(animate, 1000/30);
-    function animate()
-    {
-    	context.clearRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = "#000000"; // bg color
-        context.fillRect(0, 0, gridWidth, gridHeight);
-
-        // draw grid
-        gridGenerator(gameGrid,context);
-        // draw PacMan
-        pacmanGenerator(pacmanObject,context,pacmanPosX,pacmanPosY);
-        
-        
-	}
 };
