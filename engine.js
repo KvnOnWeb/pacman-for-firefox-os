@@ -4,14 +4,14 @@ window.onload = function()
     var canvas = document.getElementById('grid');
     if(!canvas)
     {
-        alert("Impossible de récupérer le canvas");
+        console.assert("Canvas recovery is impossible");
         return;
     }
     // Recovery of context
     var context = canvas.getContext('2d');
     if(!context)
     {
-        alert("Impossible de récupérer le context du canvas");
+        console.assert("Context of cancas is impossible of recovery");
         return;
     }
 
