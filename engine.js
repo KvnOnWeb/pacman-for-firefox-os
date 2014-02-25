@@ -36,11 +36,22 @@ window.onload = function()
     var pacmanPosX = 13;
     var pacmanPosY = 23;
 
+    // Direction
+    var lastDirection = "";
+    var askDirection = "";
+
+    // Timing
+    var oldTime = new Date();
+    var newTime = new Date();
+    var pacmanSpeed = 100; // milliseconds
+
     // add event listener for keyboard
     window.addEventListener("keydown", pacmanDirection, true);
+    window.addEventListener("keyup", pacmanDirection, true);
 
     function animate()
     {
+        newTime = new Date();
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = "#000000"; // bg color
         context.fillRect(0, 0, gridWidth, gridHeight);
@@ -48,32 +59,113 @@ window.onload = function()
         // draw grid
         gridGenerator(gameGrid,context);
         // draw PacMan
-        pacmanGenerator(pacmanObject,context,pacmanPosX,pacmanPosY);   
+        pacmanGenerator(pacmanObject,context,pacmanPosX,pacmanPosY);  
+
+        // control pacman move
+        window.requestAnimFrame(function(){pacmanControl();});
+
         // next start of animage()
-        window.requestAnimFrame(function() { animate()});     
+        window.requestAnimFrame(function() { animate();});     
 	}
 
     animate(); // first start
+
+    // Control the direction asked by User
+    function pacmanControl()
+    {
+        if(askDirection == "" && lastDirection == "")
+        {
+
+        } else if (askDirection != "")
+        {
+            lastDirection = askDirection;
+            if(isPossibleToMove(askDirection))
+            {
+                pacmanMove(askDirection);
+                //numTimeOut = setTimeout(function(){pacmanMove(askDirection);},400);
+            }
+            // reset askDirection
+            askDirection = "";
+        } else if (lastDirection != "")
+        {
+            if(isPossibleToMove(lastDirection))
+            {
+                pacmanMove(lastDirection);
+                //numTimeOut = setTimeout(function(){pacmanMove(lastDirection);},400);                
+            }
+        }     
+    }
+
+    function pacmanMove(direction)
+    {
+        // numbers of milliseconds
+        oldTimeTmp = oldTime.getTime();
+        newTimeTmp = newTime.getTime();
+
+        switch(direction)
+        {
+            case "top":
+                if(gameGrid.tab[pacmanPosY-2][pacmanPosX-1] != 1 && pacmanPosY >= 2 && (newTimeTmp - oldTimeTmp) > pacmanSpeed) {
+                    pacmanPosY--;
+                    oldTime = new Date();
+                } break;
+            case "left":
+                if(gameGrid.tab[pacmanPosY-1][pacmanPosX-2] != 1 && pacmanPosX-2 != -1 && (newTimeTmp - oldTimeTmp) > pacmanSpeed){
+                    pacmanPosX--;
+                    oldTime = new Date();
+                } break;
+            case "right":
+                if(gameGrid.tab[pacmanPosY-1][pacmanPosX] != 1 && pacmanPosX != columnsNumber && (newTimeTmp - oldTimeTmp) > pacmanSpeed) {
+                    pacmanPosX++;
+                    oldTime = new Date();
+                } break;
+            case "bottom":
+                if(gameGrid.tab[pacmanPosY][pacmanPosX-1] != 1 && pacmanPosX+1 != linesNumber && (newTimeTmp - oldTimeTmp) > pacmanSpeed) {
+                    pacmanPosY++;
+                    oldTime = new Date();
+                } break;
+            default :
+            break;
+        }
+    }
 
     // function called when user press key
     function pacmanDirection (e) {
         if(e.keyCode == 38 && pacmanPosY > 1) // top
         {
-            if(gameGrid.tab[pacmanPosY-2][pacmanPosX-1] != 1 && pacmanPosY >= 2)
-                pacmanPosY--;  
+            askDirection = "top";
         } else if(e.keyCode == 37) // left
         {
-            if(gameGrid.tab[pacmanPosY-1][pacmanPosX-2] != 1 && pacmanPosX-2 != -1)
-                pacmanPosX--;            
+            askDirection = "left";       
         } else if(e.keyCode == 39) // right
         {
-            if(gameGrid.tab[pacmanPosY-1][pacmanPosX] != 1 && pacmanPosX != columnsNumber)
-                pacmanPosX++;
+            askDirection = "right";
         } else if(e.keyCode == 40 && pacmanPosY <= linesNumber-1) // bottom
         {
-            if(gameGrid.tab[pacmanPosY][pacmanPosX-1] != 1 && pacmanPosX+1 != linesNumber)
-                pacmanPosY++;  
+            askDirection = "bottom";
         }
+    }
+
+    function isPossibleToMove(direction)
+    {
+        switch(direction)
+        {
+            case "top":
+                if(gameGrid.tab[pacmanPosY-2][pacmanPosX-1] != 1 && pacmanPosY >= 2)
+                    return true; break;
+            case "left":
+                if(gameGrid.tab[pacmanPosY-1][pacmanPosX-2] != 1 && pacmanPosX-2 != -1)
+                    return true; break;
+            case "right":
+                if(gameGrid.tab[pacmanPosY-1][pacmanPosX] != 1 && pacmanPosX != columnsNumber)
+                    return true; break;
+            case "bottom":
+                if(gameGrid.tab[pacmanPosY][pacmanPosX-1] != 1 && pacmanPosX+1 != linesNumber)
+                    return true; break;
+            default :
+                return false;
+        }
+        
     }
   
 };
@@ -81,12 +173,12 @@ window.onload = function()
 /* list of functions */
 // refresh canvas for animation
 window.requestAnimFrame = (function(){
-    return window.requestAnimationFrame    || // La forme standardisée
-        window.webkitRequestAnimationFrame || // Pour Chrome et Safari
-        window.mozRequestAnimationFrame    || // Pour Firefox
-        window.oRequestAnimationFrame      || // Pour Opera
-        window.msRequestAnimationFrame     || // Pour Internet Explorer
-        function(callback){                   // Pour les élèves du dernier rang
+    return window.requestAnimationFrame    || // Standard
+        window.webkitRequestAnimationFrame || // For Chrome and Safari
+        window.mozRequestAnimationFrame    || // For Firefox
+        window.oRequestAnimationFrame      || // For Opera
+        window.msRequestAnimationFrame     || // For Internet Explorer
+        function(callback){                   // For others
             window.setTimeout(callback, 1000 / 60);
         };
 })();
