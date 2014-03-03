@@ -1,17 +1,45 @@
-function ghost(color, positionX, positionY)
+function ghost(color, size)
 {
-	this.color = color;
-	this.positionX = positionX;
-	this.positionY = positionY;
+	this.size = size;
+	this.positionX = 14;
+	this.positionY = 15;
 
-	function changePosition(positionX, positionY)
+	this.img = new Image();
+	this.etat = "normal";
+
+	if (color == 'yellow')
+		this.img.src = 'img/yellow_ghost.png';
+	else if (color == 'red')
+		this.img.src = 'img/red_ghost.png';
+	else if (color == 'blue')
+		this.img.src = 'img/blue_ghost.png';
+
+	//context.drawImage(this.img, positionX, positionY, size, size);
+
+	function changeEtat(etat)
 	{
-		this.positionX = positionX;
-		this.positionY = positionY;
+		this.etat = etat;
 	}
 
-	function changeColor(color)
+	function changeImage()
 	{
-		this.color = color;
+		if(this.etat == "normal")
+		{
+			if (color == 'yellow')
+				this.img.src = 'img/yellow_ghost.png';
+			else if (color == 'red')
+				this.img.src = 'img/red_ghost.png';
+			else if (color == 'blue')
+				this.img.src = 'img/blue_ghost.png';
+		} else if (this.etat == "scared")
+		{
+			if (color == 'yellow')
+				this.img.src = 'img/yellow_ghost.png';
+			else if (color == 'red')
+				this.img.src = 'img/red_ghost.png';
+			else if (color == 'blue')
+				this.img.src = 'img/blue_ghost.png';
+
+		}
 	}
 }

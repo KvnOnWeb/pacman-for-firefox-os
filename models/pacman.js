@@ -1,5 +1,4 @@
-function pacman(size, squareSize)
+function pacman(size)
 {
 	this.size = size;
-	this.squareSize = squareSize;
 }

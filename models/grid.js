@@ -1,11 +1,17 @@
 
-function Grid (width, height, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize)
+function Grid (startX, startY, width, height, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize)
 {
+	// how to start drawing a grid
+	this.gridX = startX; 
+	this.gridY = startY;
+	// size of grid
 	this.width = width;
 	this.height = height;
+	// size of objects
 	this.squareSize = squareSize;
 	this.littleFoodSize = littleFoodSize;
 	this.bigFoodSize = bigFoodSize;
+	// number of lignes & columns
 	this.linesNumber = linesNumber;
 	this.columnsNumber = columnsNumber;
 

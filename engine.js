@@ -15,24 +15,28 @@ window.onload = function()
         return;
     }
 
+    /* --- Size of elements --- */
     // Set of canvas size
-    canvas.width = 550;
-    canvas.height = 680;
+    canvas.width = 320;
+    canvas.height = 480;
     // Set of grid size
-    var gridWidth = 520;
-    var gridHeight = 580;
-
+    var gridWidth = 320;
+    var gridHeight = 480;
     // Variables set
-    var squareSize = 20;
+    var pacmanSize = 6; 
+    var ghostSize = 12;
+    var squareSize = 12;
     var littleFoodSize = 2;
     var bigFoodSize = 4;
     var linesNumber = 29;
     var columnsNumber = 26;
 
-    var pacmanObject = new pacman(10,20);
+    // Pacman initialization
+    var pacmanObject = new pacman(pacmanSize);
+    var ghostObject = new ghost("blue",ghostSize);
 
     // grid initialization
-    var gameGrid = new Grid(gridWidth, gridHeight, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize);
+    var gameGrid = new Grid(3, 3, gridWidth, gridHeight, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize);
     var pacmanPosX = 13;
     var pacmanPosY = 23;
 
@@ -49,6 +53,11 @@ window.onload = function()
     window.addEventListener("keydown", pacmanDirection, true);
     window.addEventListener("keyup", pacmanDirection, true);
 
+    var elements = new Array();
+    elements["grid"] = gameGrid;
+    elements["ghost"] = ghostObject;
+    elements["pacman"] = pacmanObject;
+
     function animate()
     {
         newTime = new Date();
@@ -57,13 +66,12 @@ window.onload = function()
         context.fillRect(0, 0, gridWidth, gridHeight);
 
         // draw grid
-        gridGenerator(gameGrid,context);
+        gridGenerator(elements,context);
         // draw PacMan
-        pacmanGenerator(pacmanObject,context,pacmanPosX,pacmanPosY);  
+        pacmanGenerator(elements,context,pacmanPosX,pacmanPosY);  
 
         // control pacman move
         window.requestAnimFrame(function(){pacmanControl();});
-
         // next start of animage()
         window.requestAnimFrame(function() { animate();});     
 	}
@@ -98,7 +106,7 @@ window.onload = function()
 
     function pacmanMove(direction)
     {
-        // numbers of milliseconds
+        // millisecond time (since 1970)
         oldTimeTmp = oldTime.getTime();
         newTimeTmp = newTime.getTime();
 
