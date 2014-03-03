@@ -2,10 +2,12 @@
 <html>
 <head>
 	<title>PacMan FirefoxOS</title>
+	<link rel=stylesheet href="style.css">
 	<script src="canvas.js"></script>
 	<script src="models/pacman.js"></script>
 	<script src="models/ghost.js"></script>
-	<script src="models/grid.js"></script>	
+	<script src="models/grid.js"></script>
+	<script src="models/user.js"></script>
 	<script src="functions/gridGenerator.js"></script>
 	<script src="functions/pacmanGenerator.js"></script>
 	<script src="functions/pacmanFunctions.js"></script>
@@ -14,6 +16,10 @@
 	<canvas id="grid">
 		Message pour les navigateurs ne supportant pas encore canvas.
 	</canvas>
+	<div id="footer">
+		<h3>Score : <strong id ="score"></strong></h3>
+		<h3>Lives : <strong id ="lives"></strong></h3>
+	</div>
 	<script src="engine.js"></script>
 </body>
 </html>

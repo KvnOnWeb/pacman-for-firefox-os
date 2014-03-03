@@ -6,17 +6,17 @@ function pacman(size, positionX, positionY)
 
 	this.getPositionX = function () {
 		return this.positionX;
-	}
+	};
 
 	this.getPositionY = function () {
 		return this.positionY;
-	}
+	};
 
 	this.setPositionX = function (positionX) {
 		this.positionX = positionX;
-	}
+	};
 
 	this.setPositionY = function (positionY) {
 		this.positionY = positionY;
-	}
+	};
 }

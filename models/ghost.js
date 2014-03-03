@@ -7,35 +7,34 @@ function ghost(color, size)
 	this.img = new Image();
 	this.etat = "normal";
 
-	if (color == 'yellow')
+	if (color == 'yellow') {
 		this.img.src = 'img/yellow_ghost.png';
-	else if (color == 'red')
+	} else if (color == 'red') {
 		this.img.src = 'img/red_ghost.png';
-	else if (color == 'blue')
+	} else if (color == 'blue') {
 		this.img.src = 'img/blue_ghost.png';
-
-	//context.drawImage(this.img, positionX, positionY, size, size);
+	}
 
 	this.getPositionX = function () {
 		return this.positionX;
-	}
+	};
 
 	this.getPositionY = function () {
 		return this.positionY;
-	}
+	};
 
 	this.setPositionX = function (positionX) {
 		this.positionX = positionX;
-	}
+	};
 
 	this.setPositionY = function (positionY) {
 		this.positionY = positionY;
-	}
+	};
 
 	this.changeEtat = function (etat)
 	{
 		this.etat = etat;
-	}
+	};
 
 	this.changeImage = function ()
 	{
@@ -57,5 +56,5 @@ function ghost(color, size)
 				this.img.src = 'img/blue_ghost.png';
 
 		}
-	}
+	};
 }

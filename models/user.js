@@ -2,19 +2,16 @@ function user()
 {
 	this.score = 0;
 	this.life = 3;
-	this.positionX = 0;
-	this.positionY = 0;
 
-	function changeScore(score)
-	{
+	this.setScore = function (score){
 		this.score = score;
-	}
+	};
 
-	function looseLife()
+	this.looseLife = function ()
 	{	
 		if(this.life == 1)
 		{
-			this.life = this.life - 1;
+			return 0;
 
 		} else
 		{
@@ -22,5 +19,5 @@ function user()
 		}
 
 		return this.life;
-	}
+	};
 }
