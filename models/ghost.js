@@ -16,12 +16,28 @@ function ghost(color, size)
 
 	//context.drawImage(this.img, positionX, positionY, size, size);
 
-	function changeEtat(etat)
+	this.getPositionX = function () {
+		return this.positionX;
+	}
+
+	this.getPositionY = function () {
+		return this.positionY;
+	}
+
+	this.setPositionX = function (positionX) {
+		this.positionX = positionX;
+	}
+
+	this.setPositionY = function (positionY) {
+		this.positionY = positionY;
+	}
+
+	this.changeEtat = function (etat)
 	{
 		this.etat = etat;
 	}
 
-	function changeImage()
+	this.changeImage = function ()
 	{
 		if(this.etat == "normal")
 		{

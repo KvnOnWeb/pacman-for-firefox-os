@@ -22,6 +22,9 @@ window.onload = function()
     // Set of grid size
     var gridWidth = 320;
     var gridHeight = 480;
+    // Set of grid position in the window
+    var gridX = 3;
+    var gridY = 60;
     // Variables set
     var pacmanSize = 6; 
     var ghostSize = 12;
@@ -31,14 +34,14 @@ window.onload = function()
     var linesNumber = 29;
     var columnsNumber = 26;
 
-    // Pacman initialization
-    var pacmanObject = new pacman(pacmanSize);
-    var ghostObject = new ghost("blue",ghostSize);
-
     // grid initialization
-    var gameGrid = new Grid(3, 3, gridWidth, gridHeight, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize);
+    var gameGrid = new Grid(gridX, gridY, gridWidth, gridHeight, linesNumber, columnsNumber, squareSize, littleFoodSize, bigFoodSize);
+
+    // Pacman initialization
     var pacmanPosX = 13;
     var pacmanPosY = 23;
+    var pacmanObject = new pacman(pacmanSize,pacmanPosX,pacmanPosY);
+    var ghostObject = new ghost("blue",ghostSize);
 
     // Direction
     var lastDirection = "";
@@ -72,8 +75,16 @@ window.onload = function()
 
         // control pacman move
         window.requestAnimFrame(function(){pacmanControl();});
-        // next start of animage()
-        window.requestAnimFrame(function() { animate();});     
+        
+        pacmanObject.setPositionX(pacmanPosX);
+        pacmanObject.setPositionY(pacmanPosY);
+        if(pacmanObject.getPositionX() == ghostObject.getPositionX() && pacmanObject.getPositionY() == ghostObject.getPositionY()) {
+            // temporary game over
+            alert("Game over");
+        } else {
+            // next start of animage()
+            window.requestAnimFrame(function() { animate();});
+        }        
 	}
 
     animate(); // first start
