@@ -85,7 +85,12 @@ window.onload = function()
             if(gamer.looseLife() > 0) {
                 pacmanPosX = 13;
                 pacmanPosY = 23;
-                window.requestAnimFrame(function() { animate();});
+                document.getElementById("reset").style.display = "block";
+                setTimeout(
+                    function() {
+                        document.getElementById("reset").style.display = "none";
+                        animate();
+                    }, 1000);
             } else {
                 alert("Game over");
             }
