@@ -1,0 +1,28 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #FFF;
+	height: 320px;
+	overflow: hidden;
+}
+
+#canvas {
+	position: relative;
+	left:3px;
+}
+
+#grid {
+	background-color: #000;
+	margin: 3px;
+}
+
+h2 {
+	position: absolute;
+	top : 400px;
+	left: 30px;
+	color: #FFF;
+}
+
+h2 #score {
+
+}

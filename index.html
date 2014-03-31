@@ -2,27 +2,14 @@
 <html>
 <head>
 	<title>PacMan FirefoxOS</title>
-	<link rel=stylesheet href="style.css">
+	<link rel=stylesheet href="css/style.css">
 	<script src="canvas.js"></script>
-	<script src="models/pacman.js"></script>
-	<script src="models/ghost.js"></script>
-	<script src="models/grid.js"></script>
-	<script src="models/user.js"></script>
-	<script src="functions/gridGenerator.js"></script>
-	<script src="functions/pacmanGenerator.js"></script>
-	<script src="functions/pacmanFunctions.js"></script>
 </head>
 <body>
-	<div id="reset">
-		<h3>Restart in 1 second...</h3>
-	</div>
 	<canvas id="grid">
 		Message pour les navigateurs ne supportant pas encore canvas.
 	</canvas>
-	<div id="footer">
-		<h3>Score : <strong id ="score"></strong></h3>
-		<h3>Lives : <strong id ="lives"></strong></h3>
-	</div>
-	<script src="engine.js"></script>
+	<h2>Score <span id="score">0</span></h2>
+	<script src="js/engine.js"></script>
 </body>
 </html>
