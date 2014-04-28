@@ -124,6 +124,20 @@ function animate() {
   }
 }
 
+// Drag event (for phone)
+var hammer_options = {};
+$("#grid")
+  .hammer(hammer_options)
+  .on("dragleft", function(ev) {
+    askDirection = "left";
+  }).on("dragright", function(ev) {
+    askDirection = "right";
+  }).on("dragup", function(ev) {
+    askDirection = "top";
+  }).on("dragdown", function(ev) {
+    askDirection = "bottom";
+  });
+  
 // refresh function for animation
 window.requestAnimationFrame = (function () {
   return window.requestAnimationFrame ||
