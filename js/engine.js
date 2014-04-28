@@ -1,6 +1,16 @@
 /* --- Init global variable -- */
 var canvas, context, askDirection = "", lastDirection = "", token = 0;
 
+// For red ghost
+var tokenGhostRed = 0, askDirectionGhostRed = "", lastDirectionGhostRed = "";
+// For blue ghost
+var tokenGhostBlue = 0, askDirectionGhostBlue = "", lastDirectionGhostBlue = "";
+// For orange ghost
+var tokenGhostOrange = 0, askDirectionGhostOrange = "", lastDirectionGhostOrange = "";
+
+// For time
+var lastTimeEatable, newTime, lastTime;
+
 // Load event
 window.addEventListener('load', function () {
     // Recovery of canvas
@@ -20,55 +30,99 @@ window.addEventListener('load', function () {
     canvas.width = 305;
     canvas.height = 480;
 
-    // add events listener
+    // add events listener for keyboard
     window.addEventListener("keydown", pacmanDirection, true);
     window.addEventListener("keyup", pacmanDirection, true);
 
+    // initialize ghost
+    ghostRed.initialise();
+    ghostBlue.initialise();
+    ghostOrange.initialise();
+
+    // Time for ghost
+    lastTime = new Date();
+    lastTime = lastTime.getTime();
+
     // launch appli
     window.requestAnimationFrame(animate);
-}, false);
 
+
+}, false);
 
 /* --- List of functions --- */
 
 // animation function
 function animate() {
+  newTime = new Date();
+  newTime = newTime.getTime();
+
   context.clearRect(0, 0, canvas.width, canvas.height);
   // Draw pacman map
   map.draw();
   // Draw pacman
   pacman.draw();
 
-  var gameTime = new Date();
-  var gameStart = new Date();
-  gameStart = Date.now();
+  // Draw ghosts
+  ghostRed.draw();
+  ghostBlue.draw();
+
+  // After 3 seconds
+  if (newTime - lastTime > 3000)
+    ghostOrange.draw();
 
   // next animation
-  window.requestAnimationFrame(animate);
-}
+  if (map.end < 1) {
+    alert('You win !');
+  } else if((pacman.getPositionX() != ghostRed.getPositionX() || pacman.getPositionY() != ghostRed.getPositionY()) && (pacman.getPositionX() != ghostBlue.getPositionX() || pacman.getPositionY() != ghostBlue.getPositionY()) && (pacman.getPositionX() != ghostOrange.getPositionX() || pacman.getPositionY() != ghostOrange.getPositionY())) {
+    window.requestAnimationFrame(animate);
+  } else if (pacman.life > 1) {
+    if ((pacman.getPositionX() == ghostRed.getPositionX() && pacman.getPositionY() == ghostRed.getPositionY()) && ghostRed.eatable) {
+      pacman.score += 200;
 
-// function called when user press key
-function pacmanDirection (e) {
-    if(e.keyCode == 38) {
-        askDirection = "top";
-    } else if(e.keyCode == 37) {
-        askDirection = "left";       
-    } else if(e.keyCode == 39) {
-        askDirection = "right";
-    } else if(e.keyCode == 40) {
-        askDirection = "bottom";
-    }
-}
+      ghostRed.x = 152;
+      ghostRed.y = 168;
 
-// Fruits spawn in the map
-  function spawnFruit (t){
-    var fruit = 0;
-    var fruitTime = Math.floor((7-2)*Math.random())+2
-    if ((gameTime-gameStart) > fruitTime && fruit == 0){
-      fruitTime = 1;
+      ghostBlue.eatable = false;
+    } else if ((pacman.getPositionX() == ghostBlue.getPositionX() && pacman.getPositionY() == ghostBlue.getPositionY()) && ghostBlue.eatable) {
+      pacman.score += 200;
+
+      ghostBlue.x = 152;
+      ghostBlue.y = 168;
+
+      ghostBlue.eatable = false;
+    }  else if ((pacman.getPositionX() == ghostOrange.getPositionX() && pacman.getPositionY() == ghostOrange.getPositionY()) && ghostOrange.eatable) {
+      pacman.score += 200;
+
+      ghostOrange.x = 152;
+      ghostOrange.y = 168;
+
+      ghostBlue.eatable = false;
+    } else {
+      // Lost life
+      pacman.life--;
+      // reset position
+      pacman.x = 152;
+      pacman.y = 264;
+
+      ghostRed.x = 152;
+      ghostRed.y = 168;
+
+      ghostBlue.x = 152;
+      ghostBlue.y = 168;
+
+      ghostOrange.x = 152;
+      ghostOrange.y = 168;
     }
+
+    // relauch animation
+    window.requestAnimationFrame(animate);
+  } else {
+  // Loose game
+      // Draw life of pacman
+      document.getElementById('life').innerHTML = this.life;
+      alert("You loose !");
   }
-
+}
 
 // refresh function for animation
 window.requestAnimationFrame = (function () {
