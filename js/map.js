@@ -16,7 +16,7 @@ var map = {
         new Array(1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1),
         new Array(2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2),
         new Array(1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1),
-        new Array(2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2),
+        new Array(2, 2, 2, 1, 2, 1, 2, 2, 2, 7, 2, 2, 2, 1, 2, 1, 2, 2, 2),
         new Array(1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1),
         new Array(1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1),
         new Array(1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1),
@@ -42,7 +42,20 @@ var map = {
                     context.fillRect(this.squareSize*x, this.squareSize*y,this.squareSize,this.squareSize); // draw a road
                     context.fillStyle = "#454545"; // bg color
                     context.fillRect((this.squareSize*x)+((this.squareSize-this.littleFoodSize)/2), (this.squareSize*y)+((this.squareSize-this.littleFoodSize)/2),this.littleFoodSize,this.littleFoodSize); // draw a little food
-                }  else {
+                }  
+                else if (this.grid[y][x] == 7) {
+                //  Fruit
+                    context.fillStyle = "#000000"; // bg color
+                    context.fillRect(this.squareSize*x, this.squareSize*y,this.squareSize,this.squareSize);
+                    var imgFruit = new Image();
+                    imgFruit.src = '../img/fraise.png'; 
+                    imgFruit.onload = function(){
+                        var pattern = context.createPattern(this, "repeat");
+                        context.fillStyle = pattern;
+                        context.fill();
+                    }
+                }
+                else {
                 // Road
                     context.fillStyle = "#000000"; // bg color
                     context.fillRect(this.squareSize*x, this.squareSize*y,this.squareSize,this.squareSize); // draw a road

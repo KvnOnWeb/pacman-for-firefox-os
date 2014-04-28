@@ -39,6 +39,10 @@ function animate() {
   // Draw pacman
   pacman.draw();
 
+  var gameTime = new Date();
+  var gameStart = new Date();
+  gameStart = Date.now();
+
   // next animation
   window.requestAnimationFrame(animate);
 }
@@ -55,6 +59,16 @@ function pacmanDirection (e) {
         askDirection = "bottom";
     }
 }
+
+// Fruits spawn in the map
+  function spawnFruit (t){
+    var fruit = 0;
+    var fruitTime = Math.floor((7-2)*Math.random())+2
+    if ((gameTime-gameStart) > fruitTime && fruit == 0){
+      fruitTime = 1;
+    }
+  }
+
 
 // refresh function for animation
 window.requestAnimationFrame = (function () {
