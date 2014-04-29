@@ -16,6 +16,7 @@ var pacman = {
                 ghostBlue.eatable = true;
                 ghostRed.eatable = true;
                 ghostOrange.eatable = true;
+                ghostPink.eatable = true;
 
                 lastTimeEatable = new Date();
                 lastTimeEatable = lastTimeEatable.getTime();               

@@ -7,6 +7,8 @@ var tokenGhostRed = 0, askDirectionGhostRed = "", lastDirectionGhostRed = "";
 var tokenGhostBlue = 0, askDirectionGhostBlue = "", lastDirectionGhostBlue = "";
 // For orange ghost
 var tokenGhostOrange = 0, askDirectionGhostOrange = "", lastDirectionGhostOrange = "";
+// For pink ghost
+var tokenGhostPink = 0, askDirectionGhostPink = "", lastDirectionGhostPink = "";
 
 // For time
 var lastTimeEatable, newTime, lastTime;
@@ -38,6 +40,7 @@ window.addEventListener('load', function () {
     ghostRed.initialise();
     ghostBlue.initialise();
     ghostOrange.initialise();
+    ghostPink.initialise();
 
     // Time for ghost
     lastTime = new Date();
@@ -70,10 +73,14 @@ function animate() {
   if (newTime - lastTime > 3000)
     ghostOrange.draw();
 
+  // After 6 seconds
+  if (newTime - lastTime > 6000)
+    ghostPink.draw();
+
   // next animation
   if (map.end < 1) {
     alert('You win !');
-  } else if((pacman.getPositionX() != ghostRed.getPositionX() || pacman.getPositionY() != ghostRed.getPositionY()) && (pacman.getPositionX() != ghostBlue.getPositionX() || pacman.getPositionY() != ghostBlue.getPositionY()) && (pacman.getPositionX() != ghostOrange.getPositionX() || pacman.getPositionY() != ghostOrange.getPositionY())) {
+  } else if((pacman.getPositionX() != ghostRed.getPositionX() || pacman.getPositionY() != ghostRed.getPositionY()) && (pacman.getPositionX() != ghostBlue.getPositionX() || pacman.getPositionY() != ghostBlue.getPositionY()) && (pacman.getPositionX() != ghostOrange.getPositionX() || pacman.getPositionY() != ghostOrange.getPositionY()) && (pacman.getPositionX() != ghostPink.getPositionX() || pacman.getPositionY() != ghostPink.getPositionY())) {
     window.requestAnimationFrame(animate);
   } else if (pacman.life > 1) {
     if ((pacman.getPositionX() == ghostRed.getPositionX() && pacman.getPositionY() == ghostRed.getPositionY()) && ghostRed.eatable) {
@@ -82,7 +89,7 @@ function animate() {
       ghostRed.x = 152;
       ghostRed.y = 168;
 
-      ghostBlue.eatable = false;
+      ghostRed.eatable = false;
     } else if ((pacman.getPositionX() == ghostBlue.getPositionX() && pacman.getPositionY() == ghostBlue.getPositionY()) && ghostBlue.eatable) {
       pacman.score += 200;
 
@@ -96,7 +103,14 @@ function animate() {
       ghostOrange.x = 152;
       ghostOrange.y = 168;
 
-      ghostBlue.eatable = false;
+      ghostOrange.eatable = false;
+    }  else if ((pacman.getPositionX() == ghostPink.getPositionX() && pacman.getPositionY() == ghostPink.getPositionY()) && ghostPink.eatable) {
+      pacman.score += 200;
+
+      ghostPink.x = 152;
+      ghostPink.y = 168;
+
+      ghostPink.eatable = false;
     } else {
       // Lost life
       pacman.life--;
@@ -112,6 +126,9 @@ function animate() {
 
       ghostOrange.x = 152;
       ghostOrange.y = 168;
+
+      ghostPink.x = 152;
+      ghostPink.y = 168;
     }
 
     // relauch animation
