@@ -33,8 +33,19 @@ var ghostRed = {
         },
         draw: function () {
 
+            // teleport to right
+            if (this.getPositionX() < 1 && lastDirection == "left") {
+                this.x = 280;
+                this.y = 168;
+            }
+
+            // teleport to left
+            if (this.getPositionX() > 19 && lastDirection == "right") {
+                this.x = 0;
+                this.y = 168;
+            }
+
             if (lastDirectionGhostRed == "") {
-                this.y = 136;
                 lastDirectionGhostRed = askDirectionGhostRed;
             }
 

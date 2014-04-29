@@ -30,9 +30,19 @@ var ghostBlue = {
             this.image.src = "img/blue_ghost.png";
         },
         draw: function () {
+            // teleport to right
+            if (this.getPositionX() < 1 && lastDirection == "left") {
+                this.x = 280;
+                this.y = 168;
+            }
+
+            // teleport to left
+            if (this.getPositionX() > 19 && lastDirection == "right") {
+                this.x = 0;
+                this.y = 168;
+            }
 
             if (lastDirectionGhostBlue == "") {
-                this.y = 136;
                 lastDirectionGhostBlue = askDirectionGhostBlue;
             }
 
