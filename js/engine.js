@@ -124,6 +124,19 @@ function animate() {
   }
 }
 
+// function called when user press key with keyboard
+function pacmanDirection (e) {
+    if(e.keyCode == 38) {
+        askDirection = "top";
+    } else if(e.keyCode == 37) {
+        askDirection = "left";       
+    } else if(e.keyCode == 39) {
+        askDirection = "right";
+    } else if(e.keyCode == 40) {
+        askDirection = "bottom";
+    }
+}
+
 // Drag event (for phone)
 var hammer_options = {};
 $("#grid")
@@ -137,7 +150,7 @@ $("#grid")
   }).on("dragdown", function(ev) {
     askDirection = "bottom";
   });
-  
+
 // refresh function for animation
 window.requestAnimationFrame = (function () {
   return window.requestAnimationFrame ||
