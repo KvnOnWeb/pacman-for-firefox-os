@@ -1,14 +1,6 @@
 /* --- Init global variable -- */
 var canvas, context, askDirection = "", lastDirection = "", token = 0;
-
-// For red ghost
-var tokenGhostRed = 0, askDirectionGhostRed = "", lastDirectionGhostRed = "";
-// For blue ghost
-var tokenGhostBlue = 0, askDirectionGhostBlue = "", lastDirectionGhostBlue = "";
-// For orange ghost
-var tokenGhostOrange = 0, askDirectionGhostOrange = "", lastDirectionGhostOrange = "";
-// For pink ghost
-var tokenGhostPink = 0, askDirectionGhostPink = "", lastDirectionGhostPink = "";
+var ghostRed, ghostBlue, ghostPink, ghostOrange;
 
 // For time
 var lastTimeEatable, newTime, lastTime;
@@ -35,6 +27,12 @@ window.addEventListener('load', function () {
     // add events listener for keyboard
     window.addEventListener("keydown", pacmanDirection, true);
     window.addEventListener("keyup", pacmanDirection, true);
+
+    // create ghost
+    ghostRed = new Ghost("red");
+    ghostBlue = new Ghost("blue");
+    ghostOrange = new Ghost("orange");
+    ghostPink = new Ghost("pink");
 
     // initialize ghost
     ghostRed.initialise();
