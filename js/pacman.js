@@ -10,26 +10,11 @@ var pacman = {
     mouthPosition: -1,
     setScoreValue: function(position, direction) {
             if (position == 4) {
-            // big food
-                this.score += 50;
-                map.end--;
-                ghostBlue.eatable = true;
-                ghostRed.eatable = true;
-                ghostOrange.eatable = true;
-                ghostPink.eatable = true;
-
-                lastTimeEatable = new Date();
-                lastTimeEatable = lastTimeEatable.getTime();               
+                this.eatBigFood();              
             } else if (position == 7) {
-            // fruit
-                map.end--;
-                this.score += 100;
-                this.endOfGame--;
+                this.eatFruit();
             } else {
-            // little food
-                map.end--;
-                this.score += 10;
-                this.endOfGame--;
+                this.eatLittleFood();
             }
 
             // set grid with empty case
@@ -56,7 +41,29 @@ var pacman = {
             posY = Math.round(this.y/diameter)-1; // Array start to 0
             return posY;
     },
-    draw: function () {
+    eatBigFood: function(){
+        // big food
+        this.score += 50;
+        map.end--;
+        
+        for(var i = 0; i < ghostContainer.length; ++i){
+            ghostContainer[i].makeEatable();
+        }
+
+        lastTimeEatable = new Date();
+        lastTimeEatable = lastTimeEatable.getTime();
+    },
+    eatLittleFood: function(){
+        map.end--;
+        this.score += 10;
+        this.endOfGame--;
+    },
+    eatFruit: function(){
+        map.end--;
+        this.score += 100;
+        this.endOfGame--;
+    },
+    draw: function() {
         // teleport to right
         if (this.getPositionX() < 1 && lastDirection == "left") {
             this.x = 280;

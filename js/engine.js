@@ -1,6 +1,5 @@
 /* --- Init global variable -- */
 var canvas, context, askDirection = "", lastDirection = "", token = 0;
-var ghostRed, ghostBlue, ghostPink, ghostOrange;
 
 // For time
 var lastTimeEatable, newTime, lastTime;
@@ -28,17 +27,17 @@ window.addEventListener('load', function () {
     window.addEventListener("keydown", pacmanDirection, true);
     window.addEventListener("keyup", pacmanDirection, true);
 
-    // create ghost
-    ghostRed = new Ghost("red");
-    ghostBlue = new Ghost("blue");
-    ghostOrange = new Ghost("orange");
-    ghostPink = new Ghost("pink");
+    // create ghosts
+    ghostContainer = new Array();
+    ghostContainer.push(new Ghost("red"));
+    ghostContainer.push(new Ghost("blue"));
+    ghostContainer.push(new Ghost("orange"));
+    ghostContainer.push(new Ghost("pink"));
 
     // initialize ghost
-    ghostRed.initialise();
-    ghostBlue.initialise();
-    ghostOrange.initialise();
-    ghostPink.initialise();
+    for(var i = 0; i < ghostContainer.length; ++i){
+      ghostContainer[i].initialise();
+    }
 
     // Time for ghost
     lastTime = new Date();
@@ -64,79 +63,54 @@ function animate() {
   pacman.draw();
 
   // Draw ghosts
-  ghostRed.draw();
-  ghostBlue.draw();
+  ghostContainer[0].draw();
+  ghostContainer[1].draw();
 
   // After 3 seconds
   if (newTime - lastTime > 3000)
-    ghostOrange.draw();
+    ghostContainer[2].draw();
 
   // After 6 seconds
   if (newTime - lastTime > 6000)
-    ghostPink.draw();
+    ghostContainer[3].draw();
 
   // next animation
   if (map.end < 1) {
     alert('You win !');
-  } else if((pacman.getPositionX() != ghostRed.getPositionX() || pacman.getPositionY() != ghostRed.getPositionY()) && (pacman.getPositionX() != ghostBlue.getPositionX() || pacman.getPositionY() != ghostBlue.getPositionY()) && (pacman.getPositionX() != ghostOrange.getPositionX() || pacman.getPositionY() != ghostOrange.getPositionY()) && (pacman.getPositionX() != ghostPink.getPositionX() || pacman.getPositionY() != ghostPink.getPositionY())) {
-    window.requestAnimationFrame(animate);
-  } else if (pacman.life > 1) {
-    if ((pacman.getPositionX() == ghostRed.getPositionX() && pacman.getPositionY() == ghostRed.getPositionY()) && ghostRed.eatable) {
-      pacman.score += 200;
+  } else if (pacman.life <= 0) {
+    // Loose game
+    // Draw life of pacman
+    document.getElementById('life').innerHTML = this.life;
+    alert("You loose !");
+  } else {
+    for(var i = 0; i < ghostContainer.length; ++i){
+      if ((pacman.getPositionX() == ghostContainer[i].getPositionX() && pacman.getPositionY() == ghostContainer[i].getPositionY())) {
+        if(ghostContainer[i].eatable){
+          pacman.score += 200;
 
-      ghostRed.x = 152;
-      ghostRed.y = 168;
+          ghostContainer[i].x = 152;
+          ghostContainer[i].y = 168;
 
-      ghostRed.eatable = false;
-    } else if ((pacman.getPositionX() == ghostBlue.getPositionX() && pacman.getPositionY() == ghostBlue.getPositionY()) && ghostBlue.eatable) {
-      pacman.score += 200;
+          ghostContainer[i].eatable = false;
+        } else {
+          // Lost life
+          pacman.life--;
+          // reset position
+          pacman.x = 152;
+          pacman.y = 264;
 
-      ghostBlue.x = 152;
-      ghostBlue.y = 168;
+          for(var i = 0; i < ghostContainer.length; ++i){
+            ghostContainer[i].x = 152;
+            ghostContainer[i].y = 168;
+          }
+        }
+      }
 
-      ghostBlue.eatable = false;
-    }  else if ((pacman.getPositionX() == ghostOrange.getPositionX() && pacman.getPositionY() == ghostOrange.getPositionY()) && ghostOrange.eatable) {
-      pacman.score += 200;
-
-      ghostOrange.x = 152;
-      ghostOrange.y = 168;
-
-      ghostOrange.eatable = false;
-    }  else if ((pacman.getPositionX() == ghostPink.getPositionX() && pacman.getPositionY() == ghostPink.getPositionY()) && ghostPink.eatable) {
-      pacman.score += 200;
-
-      ghostPink.x = 152;
-      ghostPink.y = 168;
-
-      ghostPink.eatable = false;
-    } else {
-      // Lost life
-      pacman.life--;
-      // reset position
-      pacman.x = 152;
-      pacman.y = 264;
-
-      ghostRed.x = 152;
-      ghostRed.y = 168;
-
-      ghostBlue.x = 152;
-      ghostBlue.y = 168;
-
-      ghostOrange.x = 152;
-      ghostOrange.y = 168;
-
-      ghostPink.x = 152;
-      ghostPink.y = 168;
     }
 
-    // relauch animation
     window.requestAnimationFrame(animate);
-  } else {
-  // Loose game
-      // Draw life of pacman
-      document.getElementById('life').innerHTML = this.life;
-      alert("You loose !");
   }
+
 }
 
 // function called when user press key with keyboard

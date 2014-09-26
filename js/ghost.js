@@ -4,7 +4,7 @@ function Ghost(color)
     this.y = 168;
     this.size = 8;
     this.color = color;
-    this.speed = 2;
+    this.speed = 1;
     this.score = 0;
     this.eatable = false;
     this.direction = 1;
@@ -31,6 +31,9 @@ function Ghost(color)
         posY = Math.round(this.y/diameter)-1; // Array start to 0
 
         return posY;
+    };
+    this.makeEatable = function() {
+        this.eatable = true;
     };
     this.initialise = function(){
     	if (this.color == "blue")
@@ -112,7 +115,7 @@ function Ghost(color)
                 this.token = 4;
             }
         }
-
+        
         //context.beginPath();
         if (this.eatable) {
             if (newTime - lastTimeEatable < 8000)
