@@ -62,11 +62,6 @@ function Ghost(color)
             this.lastDirection = this.askDirection;
         }
 
-        if (this.mouthOpenValue <= 0)
-            this.mouthPosition = 1;
-        else if (this.mouthOpenValue >= 40)
-            this.mouthPosition = -1;
-
         // Change direction coefficient
         if (this.lastDirection == "left" || this.lastDirection == "top") {
             this.direction = -1;
@@ -117,8 +112,6 @@ function Ghost(color)
                 this.token = 4;
             }
         }
-
-        this.mouthOpenValue += (5 * this.mouthPosition);
 
         //context.beginPath();
         if (this.eatable) {

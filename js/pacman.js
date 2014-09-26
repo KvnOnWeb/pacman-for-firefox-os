@@ -73,7 +73,7 @@ var pacman = {
             lastDirection = askDirection;
         }                
 
-        if (this.mouthOpenValue <= 0)
+        if (this.mouthOpenValue <= 5)
             this.mouthPosition = 1;
         else if (this.mouthOpenValue >= 40)
             this.mouthPosition = -1;
