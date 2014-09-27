@@ -31,7 +31,19 @@ var map = {
         new Array(1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1),
         new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
     ),
-    draw : function () {
+    getMapValue: function(y, x){
+        try{
+            return this.grid[y][x];
+        } catch (err){
+            return null;
+        }
+    },
+    setMapValue: function(y, x, val){
+        try{
+            this.grid[y][x] = val;
+        } catch (err){}
+    },
+    draw: function () {
         for(y=0;y<this.lines;y++) {
         // for each y lines
             for (x=0;x<this.columns;x++) {

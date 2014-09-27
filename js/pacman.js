@@ -5,41 +5,38 @@ var pacman = {
     speed: 2,
     score: 0,
     life: 3,
-    direction: 1,
     mouthOpenValue: 40,
     mouthPosition: -1,
+    token: 1,
+    lastToken: 1,
     setScoreValue: function(position, direction) {
             if (position == 4) {
                 this.eatBigFood();
             } else if (position == 7) {
                 this.eatFruit();
-            } else {
+            } else if (position == 2){
                 this.eatLittleFood();
             }
 
             // set grid with empty case
             if (direction == "left") {
-                map.grid[this.getPositionY()][this.getPositionX()-1] = 0;
+                map.setMapValue(this.getPositionY(), this.getPositionX()-1, 0);
             } else if (direction == "right") {
-                map.grid[this.getPositionY()][this.getPositionX()+1] = 0;
+                map.setMapValue(this.getPositionY(), this.getPositionX()+1, 0);
             } else if (direction == "top") {
-                map.grid[this.getPositionY()-1][this.getPositionX()] = 0;
-            } else {
-                map.grid[this.getPositionY()+1][this.getPositionX()] = 0;
+                map.setMapValue(this.getPositionY()-1, this.getPositionX(), 0);
+            } else if (direction == "bottom") {
+                map.setMapValue(this.getPositionY()+1, this.getPositionX(), 0);
             }
 
             // set score in the screen
             document.getElementById('score').innerHTML = this.score;
     },
     getPositionX: function() {
-            diameter = 2 * this.size;
-            posX = Math.round(this.x/diameter)-1; // Array start to 0
-            return posX;
+            return Math.round(this.x/map.squareSize)-1; // Array start to 0
     },
     getPositionY: function() {
-            diameter = 2 * this.size;
-            posY = Math.round(this.y/diameter)-1; // Array start to 0
-            return posY;
+            return Math.round(this.y/map.squareSize)-1; // Array start to 0
     },
     eatBigFood: function(){
         // big food
@@ -56,135 +53,148 @@ var pacman = {
     eatLittleFood: function(){
         map.end--;
         this.score += 10;
-        this.endOfGame--;
     },
     eatFruit: function(){
         map.end--;
         this.score += 100;
-        this.endOfGame--;
     },
-    draw: function() {
+    checkForTeleport: function(){
         // teleport to right
-        if (this.getPositionX() < 1 && lastDirection == "left") {
-            this.x = 280;
+        if (this.getPositionX() < -1) {
+            this.x = 312;
             this.y = 168;
         }
 
         // teleport to left
-        if (this.getPositionX() > 19 && lastDirection == "right") {
+        if (this.getPositionX() > 19) {
             this.x = 0;
             this.y = 168;
         }
+    },
+    askForDirection: function(){
+        if (askDirection == "left" && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
+            this.setScoreValue(map.getMapValue(this.getPositionY(), this.getPositionX()-1), "left");
+            this.x -= this.speed;
+            this.token = this.lastToken = 1;
 
-        if (lastDirection == "") {
-            lastDirection = askDirection;
+            return true;
+        } else if (askDirection == "right" && map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
+            this.setScoreValue(map.getMapValue(this.getPositionY(), this.getPositionX()+1), "right");
+            this.x += this.speed;
+            this.token = this.lastToken = 2;
+
+            return true;
+        } else if(askDirection == "top" && map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
+            this.setScoreValue(map.getMapValue(this.getPositionY()-1, this.getPositionX()), "top");
+            this.y -= this.speed;
+            this.token = this.lastToken = 3;
+
+            return true;
+        } else if (askDirection == "bottom" && map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
+            if(map.getMapValue(this.getPositionY()+1, this.getPositionX()) == 2 || map.getMapValue(this.getPositionY()+1, this.getPositionX()) == 4 || map.getMapValue(this.getPositionY()+1, this.getPositionX()) == 7)
+            this.setScoreValue(map.getMapValue(this.getPositionY()+1, this.getPositionX()), "bottom");
+            this.y += this.speed;
+            this.token = this.lastToken = 4;
+
+            return true;
+        } else {
+            return false;
         }
+    },
+    move: function(){
+        this.checkForTeleport();
+
+        if (this.token == 1) { // left
+            if (this.x%map.squareSize - map.squareSize/2 == 0) {
+                if(!this.askForDirection()){
+                    if(map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5){
+                        this.x -= this.speed;
+                    } else {
+                        this.token = 0;
+                    }
+                }
+            } else {
+                this.x -= this.speed;
+            }
+        } else if (this.token == 2) { // right
+            if (this.x%map.squareSize - map.squareSize/2 == 0) {
+                if(!this.askForDirection()){
+                    if(map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 5){
+                        this.x += this.speed;
+                    } else {
+                        this.token = 0;
+                    }
+                }
+            } else {
+                this.x += this.speed;
+            }
+        } else if (this.token == 3) { // top
+            if (this.y%map.squareSize - map.squareSize/2 == 0) {
+                if(!this.askForDirection()){
+                    if(map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 5){
+                        this.y -= this.speed;
+                    } else {
+                        this.token = 0;
+                    }
+                }
+            } else {
+                this.y -= this.speed;
+            }
+        } else if (this.token == 4) { // bottom
+            if (this.y%map.squareSize - map.squareSize/2 == 0) {
+                if(!this.askForDirection()){
+                    if(map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 5){
+                        this.y += this.speed;
+                    } else {
+                        this.token = 0;
+                    }
+                }
+            } else {
+                this.y += this.speed;
+            }
+
+        } else {
+                this.askForDirection();
+        }
+
+    },
+    draw: function() {
+        this.move();
 
         if (this.mouthOpenValue <= 5)
             this.mouthPosition = 1;
         else if (this.mouthOpenValue >= 40)
             this.mouthPosition = -1;
 
-        // Change direction coefficient
-        if (lastDirection == "left" || lastDirection == "top") {
-            this.direction = -1;
-        } else {
-            this.direction = 1;
-        }
-
-        if (token == 1) { // left
-                if ((this.x%(this.size*2))-this.size != 0) {
-                    this.x += (this.speed * this.direction);
-                } else {
-                    token = 0;
-                }
-        } else if (token == 2) { // right
-                if ((this.x%(this.size*2))-this.size != 0) {
-                    this.x += (this.speed * this.direction);
-                } else {
-                    token = 0;
-                }
-        } else if (token == 3) { // top
-                if ((this.y%(this.size*2))-this.size != 0) {
-                    this.y += (this.speed * this.direction);
-                } else {
-                    token = 0;
-                }
-        } else if (token == 4) { // bottom
-                if ((this.y%(this.size*2))-this.size != 0) {
-                    this.y += (this.speed * this.direction);
-                } else {
-                    token = 0;
-                }
-        } else {
-                lastDirection = askDirection;
-                if (askDirection == "left" && map.grid[this.getPositionY()][this.getPositionX()-1] != 1 && map.grid[this.getPositionY()][this.getPositionX()-1] != 5) {
-                    if (map.grid[this.getPositionY()][this.getPositionX()-1] == 2 || map.grid[this.getPositionY()][this.getPositionX()-1] == 4 || map.grid[this.getPositionY()][this.getPositionX()-1] == 7) {
-                        this.setScoreValue(map.grid[this.getPositionY()][this.getPositionX()-1], "left");
-                    }
-                    this.x += (this.speed * this.direction);
-                    token = 1;
-                } else if (askDirection == "right" && map.grid[this.getPositionY()][this.getPositionX()+1] != 1 && map.grid[this.getPositionY()][this.getPositionX()-1] != 5) {
-
-                    if(map.grid[this.getPositionY()][this.getPositionX()+1] == 2 || map.grid[this.getPositionY()][this.getPositionX()+1] == 4 || map.grid[this.getPositionY()][this.getPositionX()+1] == 7)
-                    {
-                        this.setScoreValue(map.grid[this.getPositionY()][this.getPositionX()+1], "right");
-                    }
-                    this.x += (this.speed * this.direction);
-                    token = 2;
-                }
-                else if(askDirection == "top" && map.grid[this.getPositionY()-1][this.getPositionX()] != 1 && map.grid[this.getPositionY()][this.getPositionX()-1] != 5) {
-
-                    if(map.grid[this.getPositionY()-1][this.getPositionX()] == 2 || map.grid[this.getPositionY()-1][this.getPositionX()] == 4 || map.grid[this.getPositionY()-1][this.getPositionX()] == 7)
-                    {
-                        this.setScoreValue(map.grid[this.getPositionY()-1][this.getPositionX()], "top");
-                    }
-
-                    this.y += (this.speed * this.direction);
-                    token = 3;
-                } else if (askDirection == "bottom" && map.grid[this.getPositionY()+1][this.getPositionX()] != 1 && map.grid[this.getPositionY()][this.getPositionX()-1] != 5) {
-
-                    if(map.grid[this.getPositionY()+1][this.getPositionX()] == 2 || map.grid[this.getPositionY()+1][this.getPositionX()] == 4 || map.grid[this.getPositionY()+1][this.getPositionX()] == 7)
-                    {
-                        this.setScoreValue(map.grid[this.getPositionY()+1][this.getPositionX()], "bottom");
-                    }
-                    this.y += (this.speed * this.direction);
-                    token = 4;
-                }
-        }
-
         this.mouthOpenValue += (5 * this.mouthPosition);
 
         // Prepare to drawing
         context.beginPath();
 
-        if (this.direction === 1) {
-            if (lastDirection == "right") {
-            // Right
-                context.arc(this.x, this.y, this.size, (Math.PI / 180) * this.mouthOpenValue, (Math.PI / 180) * (360 - this.mouthOpenValue));
-            } else {
-            // Bottom
-                context.arc(this.x, this.y, this.size, (Math.PI / 180) * (this.mouthOpenValue+90), (Math.PI / 180) * (90 - this.mouthOpenValue));
-            }
-        }
-        else {
-            if (lastDirection == "left") {
-            // Left
-                context.arc(this.x, this.y, this.size, (Math.PI / 180) * (180 - this.mouthOpenValue), (Math.PI / 180) * (180 + this.mouthOpenValue), true);
-            } else {
-            // Top
-                context.arc(this.x, this.y, this.size, (Math.PI / 180) * (this.mouthOpenValue-90), (Math.PI / 180) * (-90 - this.mouthOpenValue));
-            }
+        switch(this.lastToken){
+        case 1:
+            context.arc(this.x, this.y, this.size, (Math.PI / 180) * (180 - this.mouthOpenValue), (Math.PI / 180) * (180 + this.mouthOpenValue), true);
+            break;
+        case 2:
+            context.arc(this.x, this.y, this.size, (Math.PI / 180) * this.mouthOpenValue, (Math.PI / 180) * (360 - this.mouthOpenValue));
+            break;
+        case 3:
+            context.arc(this.x, this.y, this.size, (Math.PI / 180) * (this.mouthOpenValue-90), (Math.PI / 180) * (-90 - this.mouthOpenValue));
+            break;
+        case 4:
+            context.arc(this.x, this.y, this.size, (Math.PI / 180) * (this.mouthOpenValue+90), (Math.PI / 180) * (90 - this.mouthOpenValue));
+            break;
         }
 
         context.lineTo(this.x, this.y);
         context.fillStyle = '#FF0';
-        context.fillText(this.gameLoop(),10,90);
+        //context.fillText(this.gameLoop(),10,90);
         context.fill();
 
         // Draw life of pacman
         document.getElementById('life').innerHTML = this.life;
-    },
+    }
+    /*,
     lastLoop: new Date(),
     lastFPS: 0,
     fpsCount: 0,
@@ -196,9 +206,8 @@ var pacman = {
             this.lastLoop = new Date();
             this.lastFPS = this.fpsCount;
             this.fpsCount = 0;
-            return this.lastFPS;
         }
 
         return this.lastFPS;
-    }
+    }*/
 };
