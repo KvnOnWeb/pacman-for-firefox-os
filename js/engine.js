@@ -4,6 +4,7 @@ var canvas, context, askDirection = "";
 // For time
 var lastTimeEatable, newTime, lastTime;
 
+
 // Load event
 window.addEventListener('load', function () {
     // Recovery of canvas
@@ -132,13 +133,13 @@ function animate() {
 // function called when user press key with keyboard
 function pacmanDirection (e) {
     if(e.keyCode == 38) {
-        askDirection = "top";
+        pacman.setNextDirection("up");
     } else if(e.keyCode == 37) {
-        askDirection = "left";
+        pacman.setNextDirection("left");
     } else if(e.keyCode == 39) {
-        askDirection = "right";
+        pacman.setNextDirection("right");
     } else if(e.keyCode == 40) {
-        askDirection = "bottom";
+        pacman.setNextDirection("down");
     }
 }
 
@@ -147,13 +148,13 @@ var hammer_options = {};
 $("#grid")
   .hammer(hammer_options)
   .on("dragleft", function(ev) {
-    askDirection = "left";
+    pacman.setNextDirection("left");
   }).on("dragright", function(ev) {
-    askDirection = "right";
+    pacman.setNextDirection("right");
   }).on("dragup", function(ev) {
-    askDirection = "top";
+    pacman.setNextDirection("up");
   }).on("dragdown", function(ev) {
-    askDirection = "bottom";
+    pacman.setNextDirection("down");
   });
 
 // refresh function for animation
