@@ -47,7 +47,7 @@ function Ghost(color)
 
         this.image.src = this.imageSrcGhost;
     };
-    
+
     this.draw = function () {
         // teleport to right
         if (this.getPositionX() < 1 && this.lastDirection == "left") {
@@ -115,7 +115,7 @@ function Ghost(color)
                 this.token = 4;
             }
         }
-        
+
         //context.beginPath();
         if (this.eatable) {
             if (newTime - lastTimeEatable < 8000)
@@ -137,6 +137,6 @@ function Ghost(color)
         if (this.y == 168 ) {
             this.y = 136;
         }
-        
+
     };
 }

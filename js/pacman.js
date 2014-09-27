@@ -10,7 +10,7 @@ var pacman = {
     mouthPosition: -1,
     setScoreValue: function(position, direction) {
             if (position == 4) {
-                this.eatBigFood();              
+                this.eatBigFood();
             } else if (position == 7) {
                 this.eatFruit();
             } else {
@@ -45,7 +45,7 @@ var pacman = {
         // big food
         this.score += 50;
         map.end--;
-        
+
         for(var i = 0; i < ghostContainer.length; ++i){
             ghostContainer[i].makeEatable();
         }
@@ -78,7 +78,7 @@ var pacman = {
 
         if (lastDirection == "") {
             lastDirection = askDirection;
-        }                
+        }
 
         if (this.mouthOpenValue <= 5)
             this.mouthPosition = 1;
@@ -159,8 +159,8 @@ var pacman = {
         context.beginPath();
 
         if (this.direction === 1) {
-            if (lastDirection == "right") {     
-            // Right          
+            if (lastDirection == "right") {
+            // Right
                 context.arc(this.x, this.y, this.size, (Math.PI / 180) * this.mouthOpenValue, (Math.PI / 180) * (360 - this.mouthOpenValue));
             } else {
             // Bottom
@@ -179,9 +179,26 @@ var pacman = {
 
         context.lineTo(this.x, this.y);
         context.fillStyle = '#FF0';
+        context.fillText(this.gameLoop(),10,90);
         context.fill();
 
         // Draw life of pacman
         document.getElementById('life').innerHTML = this.life;
+    },
+    lastLoop: new Date(),
+    lastFPS: 0,
+    fpsCount: 0,
+    gameLoop: function() {
+        ++this.fpsCount;
+
+        var thisLoop = new Date();
+        if((thisLoop - this.lastLoop) > 1000){
+            this.lastLoop = new Date();
+            this.lastFPS = this.fpsCount;
+            this.fpsCount = 0;
+            return this.lastFPS;
+        }
+
+        return this.lastFPS;
     }
 };

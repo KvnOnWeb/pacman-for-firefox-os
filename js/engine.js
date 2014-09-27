@@ -44,7 +44,7 @@ window.addEventListener('load', function () {
     lastTime = lastTime.getTime();
 
     // launch appli
-    window.requestAnimationFrame(animate);
+    requestAnimationFrame(step);
 
 
 }, false);
@@ -52,6 +52,24 @@ window.addEventListener('load', function () {
 /* --- List of functions --- */
 
 // animation function
+var fps = 60;
+var now, delta;
+var then = Date.now();
+var interval = 1000/fps;
+
+function step(){
+  window.requestAnimationFrame(step);
+
+    now = Date.now();
+    delta = now - then;
+
+    if (delta > interval) {
+        then = now - (delta % interval);
+
+        animate();
+    }
+}
+
 function animate() {
   newTime = new Date();
   newTime = newTime.getTime();
@@ -107,8 +125,6 @@ function animate() {
       }
 
     }
-
-    window.requestAnimationFrame(animate);
   }
 
 }
@@ -118,7 +134,7 @@ function pacmanDirection (e) {
     if(e.keyCode == 38) {
         askDirection = "top";
     } else if(e.keyCode == 37) {
-        askDirection = "left";       
+        askDirection = "left";
     } else if(e.keyCode == 39) {
         askDirection = "right";
     } else if(e.keyCode == 40) {
@@ -142,12 +158,14 @@ $("#grid")
 
 // refresh function for animation
 window.requestAnimationFrame = (function () {
-  return window.requestAnimationFrame ||
+  return (
+          window.requestAnimationFrame ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame ||
           window.oRequestAnimationFrame ||
           window.msRequestAnimationFrame ||
           function (callback) {
             window.setTimeout(callback, 1000 / 60);
-          };
+          }
+    );
 })();

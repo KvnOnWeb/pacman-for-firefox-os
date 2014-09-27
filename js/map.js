@@ -62,11 +62,11 @@ var map = {
                 //  Fruit
                     context.fillStyle = "#000000"; // bg color
                     context.fillRect(this.squareSize*x, this.squareSize*y,this.squareSize,this.squareSize);
-                    
+
                     if (this.level == 1) {
-                        this.fruitImage.src = 'img/cherry.png'; 
+                        this.fruitImage.src = 'img/cherry.png';
                     }
-                    context.drawImage(this.fruitImage, (this.squareSize*x), (this.squareSize*y), 16, 16);                    
+                    context.drawImage(this.fruitImage, (this.squareSize*x), (this.squareSize*y), 16, 16);
                 } else {
                 // Road
                     context.fillStyle = "#000000"; // bg color
