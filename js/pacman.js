@@ -32,16 +32,7 @@ Pacman.prototype.setScoreValue = function(position, direction) {
         this.eatLittleFood();
     }
 
-    // set grid with empty case
-    if (direction == "left") {
-        map.setMapValue(this.getPositionY(), this.getPositionX()-1, 0);
-    } else if (direction == "right") {
-        map.setMapValue(this.getPositionY(), this.getPositionX()+1, 0);
-    } else if (direction == "top") {
-        map.setMapValue(this.getPositionY()-1, this.getPositionX(), 0);
-    } else if (direction == "bottom") {
-        map.setMapValue(this.getPositionY()+1, this.getPositionX(), 0);
-    }
+    map.setMapValue(this.getPositionY(), this.getPositionX(), 0);
 
     // set score in the screen
     document.getElementById('score').innerHTML = this.score;
@@ -72,26 +63,21 @@ Pacman.prototype.eatFruit = function(){
 
 Pacman.prototype.askForDirection = function(){
     if (this.getNextDirection() == "left" && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
-        this.setScoreValue(map.getMapValue(this.getPositionY(), this.getPositionX()-1), "left");
         this.x -= this.speed;
         this.token = this.lastToken = 1;
 
         return true;
     } else if (this.getNextDirection() == "right" && map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
-        this.setScoreValue(map.getMapValue(this.getPositionY(), this.getPositionX()+1), "right");
         this.x += this.speed;
         this.token = this.lastToken = 2;
 
         return true;
     } else if(this.getNextDirection() == "up" && map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
-        this.setScoreValue(map.getMapValue(this.getPositionY()-1, this.getPositionX()), "top");
         this.y -= this.speed;
         this.token = this.lastToken = 3;
 
         return true;
     } else if (this.getNextDirection() == "down" && map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
-        if(map.getMapValue(this.getPositionY()+1, this.getPositionX()) == 2 || map.getMapValue(this.getPositionY()+1, this.getPositionX()) == 4 || map.getMapValue(this.getPositionY()+1, this.getPositionX()) == 7)
-        this.setScoreValue(map.getMapValue(this.getPositionY()+1, this.getPositionX()), "bottom");
         this.y += this.speed;
         this.token = this.lastToken = 4;
 
@@ -106,6 +92,7 @@ Pacman.prototype.move = function(){
 
     if (this.token == 1) { // left
         if (this.x%map.squareSize - map.squareSize/2 == 0) {
+            this.setScoreValue(map.getMapValue(this.getPositionY(), this.getPositionX()), 0);
             if(!this.askForDirection()){
                 if(map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5){
                     this.x -= this.speed;
@@ -118,6 +105,7 @@ Pacman.prototype.move = function(){
         }
     } else if (this.token == 2) { // right
         if (this.x%map.squareSize - map.squareSize/2 == 0) {
+            this.setScoreValue(map.getMapValue(this.getPositionY(), this.getPositionX()), 0);
             if(!this.askForDirection()){
                 if(map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 5){
                     this.x += this.speed;
@@ -128,8 +116,9 @@ Pacman.prototype.move = function(){
         } else {
             this.x += this.speed;
         }
-    } else if (this.token == 3) { // top
+    } else if (this.token == 3) { // up
         if (this.y%map.squareSize - map.squareSize/2 == 0) {
+            this.setScoreValue(map.getMapValue(this.getPositionY(), this.getPositionX()), 0);
             if(!this.askForDirection()){
                 if(map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 5){
                     this.y -= this.speed;
@@ -140,8 +129,9 @@ Pacman.prototype.move = function(){
         } else {
             this.y -= this.speed;
         }
-    } else if (this.token == 4) { // bottom
+    } else if (this.token == 4) { // down
         if (this.y%map.squareSize - map.squareSize/2 == 0) {
+            this.setScoreValue(map.getMapValue(this.getPositionY(), this.getPositionX()), 0);
             if(!this.askForDirection()){
                 if(map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 5){
                     this.y += this.speed;

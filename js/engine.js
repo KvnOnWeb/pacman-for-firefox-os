@@ -1,5 +1,5 @@
 /* --- Init global variable -- */
-var canvas, context, askDirection = "";
+var canvas, context;
 
 // For time
 var lastTimeEatable, newTime, lastTime;
