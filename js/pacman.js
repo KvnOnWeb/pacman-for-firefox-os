@@ -39,13 +39,16 @@ Pacman.prototype.setScoreValue = function(position, direction) {
 };
 
 Pacman.prototype.eatBigFood = function(){
+    pauseModeChanger();
+    setTimeout(function(){runModeChanger()}, 10000);
+
+    for(var i = 0; i < ghostContainer.length; ++i){
+        ghostContainer[i].goFrightened();
+    }
+
     // big food
     this.score += 50;
     map.end--;
-
-    for(var i = 0; i < ghostContainer.length; ++i){
-        ghostContainer[i].makeEatable();
-    }
 
     lastTimeEatable = new Date();
     lastTimeEatable = lastTimeEatable.getTime();

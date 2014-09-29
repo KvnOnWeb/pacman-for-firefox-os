@@ -31,14 +31,16 @@ window.addEventListener('load', function () {
     // create ghosts
     ghostContainer = new Array();
     ghostContainer.push(new Ghost("red"));
-    ghostContainer.push(new Ghost("blue"));
-    ghostContainer.push(new Ghost("orange"));
-    ghostContainer.push(new Ghost("pink"));
+    //ghostContainer.push(new Ghost("blue"));
+    //ghostContainer.push(new Ghost("orange"));
+    //ghostContainer.push(new Ghost("pink"));
 
     // initialize ghost
     for(var i = 0; i < ghostContainer.length; ++i){
       ghostContainer[i].initialise();
     }
+
+    runModeChanger();
 
     // Time for ghost
     lastTime = new Date();
@@ -52,8 +54,51 @@ window.addEventListener('load', function () {
 
 /* --- List of functions --- */
 
+//modes functions
+
+var modeTimes = [
+    { time: 0, changeTo: "scatter"},
+    { time: 7, changeTo: "chase"},
+    { time: 20, changeTo: "scatter"},
+    { time: 7, changeTo: "chase"},
+    { time: 20, changeTo: "scatter"},
+    { time: 5, changeTo: "chase"},
+    { time: 20, changeTo: "scatter"},
+    { time: 5, changeTo: "chase"},
+];
+
+var modeChangeTimer = null;
+var modeChangeTimerStartTime = null;
+
+function runModeChanger(){
+    modeChangeTimerStartTime = new Date().getSeconds();
+    modeChangeTimer = setTimeout(function(){
+        for(var i = 0; i < ghostContainer.length; ++i){
+            ghostContainer[i].setMode(modeTimes[0].changeTo);
+        }
+
+        modeTimes.shift();
+        if(modeTimes.length > 0) {
+            runModeChanger();
+        }
+
+    }, modeTimes[0].time * 1000);
+}
+
+function pauseModeChanger(){
+    clearTimeout(modeChangeTimer);
+
+    var newTime = modeTimes[0].time - (new Date().getSeconds() - modeChangeTimerStartTime);
+    if(newTime >= 0){
+        modeTimes[0].time = newTime;
+    } else {
+        modeTimes[0].time = 0;
+    }
+}
+
+
 // animation function
-var fps = 60;
+var fps = 30;
 var now, delta;
 var then = Date.now();
 var interval = 1000/fps;
@@ -81,17 +126,24 @@ function animate() {
   // Draw pacman
   pacman.draw();
 
+    //target
+    for(var i = 0; i < ghostContainer.length; ++i){
+        context.fillStyle = "red";
+        context.fillRect(ghostContainer[i].getTarget()[1]*16, ghostContainer[i].getTarget()[0]*16, 5, 5);
+    }
+
+
   // Draw ghosts
   ghostContainer[0].draw();
-  ghostContainer[1].draw();
+  //ghostContainer[1].draw();
 
   // After 3 seconds
-  if (newTime - lastTime > 3000)
+  /*if (newTime - lastTime > 3000)
     ghostContainer[2].draw();
 
   // After 6 seconds
   if (newTime - lastTime > 6000)
-    ghostContainer[3].draw();
+    ghostContainer[3].draw();*/
 
   // next animation
   if (map.end < 1) {
@@ -108,7 +160,7 @@ function animate() {
           pacman.score += 200;
 
           ghostContainer[i].x = 152;
-          ghostContainer[i].y = 168;
+          ghostContainer[i].y = 136;
 
           ghostContainer[i].eatable = false;
         } else {
@@ -120,7 +172,7 @@ function animate() {
 
           for(var i = 0; i < ghostContainer.length; ++i){
             ghostContainer[i].x = 152;
-            ghostContainer[i].y = 168;
+            ghostContainer[i].y = 136;
           }
         }
       }
