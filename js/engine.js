@@ -30,10 +30,10 @@ window.addEventListener('load', function () {
 
     // create ghosts
     ghostContainer = new Array();
-    ghostContainer.push(new Ghost("red"));
-    //ghostContainer.push(new Ghost("blue"));
-    //ghostContainer.push(new Ghost("orange"));
-    //ghostContainer.push(new Ghost("pink"));
+    ghostContainer.push(new GhostRed());
+    ghostContainer.push(new GhostPink());
+    ghostContainer.push(new GhostBlue());
+    ghostContainer.push(new GhostOrange());
 
     // initialize ghost
     for(var i = 0; i < ghostContainer.length; ++i){
@@ -71,6 +71,7 @@ var modeChangeTimer = null;
 var modeChangeTimerStartTime = null;
 
 function runModeChanger(){
+    console.log("Asd");
     modeChangeTimerStartTime = new Date().getSeconds();
     modeChangeTimer = setTimeout(function(){
         for(var i = 0; i < ghostContainer.length; ++i){
@@ -126,16 +127,33 @@ function animate() {
   // Draw pacman
   pacman.draw();
 
-    //target
-    for(var i = 0; i < ghostContainer.length; ++i){
-        context.fillStyle = "red";
-        context.fillRect(ghostContainer[i].getTarget()[1]*16, ghostContainer[i].getTarget()[0]*16, 5, 5);
-    }
+
+/*  //targets
+    context.fillStyle = "red";
+    context.fillRect(ghostContainer[0].getTarget()[1]*16, ghostContainer[0].getTarget()[0]*16, 5, 5);
+
+    context.fillStyle = "pink";
+    context.fillRect(ghostContainer[1].getTarget()[1]*16, ghostContainer[1].getTarget()[0]*16, 5, 5);
+
+    context.fillStyle = "cyan";
+    context.fillRect(ghostContainer[2].getTarget()[1]*16, ghostContainer[2].getTarget()[0]*16, 5, 5);
+
+    context.fillStyle = "orange";
+    context.fillRect(ghostContainer[3].getTarget()[1]*16, ghostContainer[3].getTarget()[0]*16, 5, 5);
+*/
 
 
   // Draw ghosts
   ghostContainer[0].draw();
-  //ghostContainer[1].draw();
+
+if (newTime - lastTime > 1000)
+  ghostContainer[1].draw();
+
+if (newTime - lastTime > 3000)
+  ghostContainer[2].draw();
+
+if (newTime - lastTime > 5000)
+  ghostContainer[3].draw();
 
   // After 3 seconds
   /*if (newTime - lastTime > 3000)

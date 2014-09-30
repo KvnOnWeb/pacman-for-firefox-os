@@ -23,6 +23,11 @@ Pacman.prototype.setNextDirection = function(direction){
     this.nextDirection = direction;
 };
 
+
+Pacman.prototype.getDirection = function(){
+    return this.token;
+};
+
 Pacman.prototype.setScoreValue = function(position, direction) {
     if (position == 4) {
         this.eatBigFood();
@@ -40,7 +45,7 @@ Pacman.prototype.setScoreValue = function(position, direction) {
 
 Pacman.prototype.eatBigFood = function(){
     pauseModeChanger();
-    setTimeout(function(){runModeChanger()}, 10000);
+    //setTimeout(function(){runModeChanger(); console.log("123");}, 10000);
 
     for(var i = 0; i < ghostContainer.length; ++i){
         ghostContainer[i].goFrightened();

@@ -28,15 +28,20 @@ Ghost.prototype.makeEatable = function(){
 
 Ghost.prototype.goFrightened = function(){
     this.makeEatable();
-    this.setMode("frightened");
 
+    var lastMode = this.getMode();
+    this.setMode("frightened");
     this.image.src = "img/eatable_ghost.png";
 
     setTimeout(function(){ this.image.src = this.imageSrcGhost; }.bind(this), 8000);
     setTimeout(function(){ this.image.src = "img/eatable_ghost.png"; }.bind(this), 8500);
     setTimeout(function(){ this.image.src = this.imageSrcGhost; }.bind(this), 9000);
     setTimeout(function(){ this.image.src = "img/eatable_ghost.png"; }.bind(this), 9500);
-    setTimeout(function(){ this.image.src = this.imageSrcGhost; }.bind(this), 10000);
+    setTimeout(function(){
+        this.image.src = this.imageSrcGhost;
+        this.setMode(lastMode);
+        runModeChanger();
+    }.bind(this), 10000);
 };
 
 Ghost.prototype.getMode = function(){
@@ -153,6 +158,7 @@ Ghost.prototype.move = function(){
     this.checkForTeleport();
 
     if((this.x%map.squareSize - map.squareSize/2 == 0) && (this.y%map.squareSize - map.squareSize/2 == 0)){
+        this.chooseTarget();
         this.token = this.chooseNextStepCloseToTarget();
     }
 
