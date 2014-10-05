@@ -49,7 +49,7 @@ Ghost.prototype.getMode = function(){
 };
 
 Ghost.prototype.setMode = function(mode){
-    console.log(mode);
+    //console.log(mode);
     this.mode = mode;
 };
 

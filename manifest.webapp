@@ -9,5 +9,6 @@
     "name": "Kevin & Antony",
     "url": "http://www.univ-evry.fr"
   },
-  "default_locale": "en"
+  "default_locale": "en",
+  "version": "0.8"
 }

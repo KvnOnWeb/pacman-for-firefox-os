@@ -71,7 +71,6 @@ var modeChangeTimer = null;
 var modeChangeTimerStartTime = null;
 
 function runModeChanger(){
-    console.log("Asd");
     modeChangeTimerStartTime = new Date().getSeconds();
     modeChangeTimer = setTimeout(function(){
         for(var i = 0; i < ghostContainer.length; ++i){
