@@ -30,10 +30,10 @@ window.addEventListener('load', function () {
 
     // create ghosts
     ghostContainer = new Array();
-    ghostContainer.push(new GhostRed());
-    ghostContainer.push(new GhostPink());
-    ghostContainer.push(new GhostBlue());
-    ghostContainer.push(new GhostOrange());
+    ghostContainer.push(new GhostRed(152, 136, 0));
+    ghostContainer.push(new GhostPink(152, 168, 1));
+    ghostContainer.push(new GhostBlue(136, 168, 5));
+    ghostContainer.push(new GhostOrange(168, 168, 8));
 
     // initialize ghost
     for(var i = 0; i < ghostContainer.length; ++i){
@@ -74,7 +74,9 @@ function runModeChanger(){
     modeChangeTimerStartTime = new Date().getSeconds();
     modeChangeTimer = setTimeout(function(){
         for(var i = 0; i < ghostContainer.length; ++i){
-            ghostContainer[i].setMode(modeTimes[0].changeTo);
+            if(ghostContainer[i].getMode() != "idle" && ghostContainer[i].getMode() != "leave"){
+                ghostContainer[i].setMode(modeTimes[0].changeTo);
+            }
         }
 
         modeTimes.shift();
@@ -121,46 +123,14 @@ function animate() {
   newTime = newTime.getTime();
 
   context.clearRect(0, 0, canvas.width, canvas.height);
-  // Draw pacman map
+
   map.draw();
-  // Draw pacman
   pacman.draw();
 
-
-/*  //targets
-    context.fillStyle = "red";
-    context.fillRect(ghostContainer[0].getTarget()[1]*16, ghostContainer[0].getTarget()[0]*16, 5, 5);
-
-    context.fillStyle = "pink";
-    context.fillRect(ghostContainer[1].getTarget()[1]*16, ghostContainer[1].getTarget()[0]*16, 5, 5);
-
-    context.fillStyle = "cyan";
-    context.fillRect(ghostContainer[2].getTarget()[1]*16, ghostContainer[2].getTarget()[0]*16, 5, 5);
-
-    context.fillStyle = "orange";
-    context.fillRect(ghostContainer[3].getTarget()[1]*16, ghostContainer[3].getTarget()[0]*16, 5, 5);
-*/
-
-
   // Draw ghosts
-  ghostContainer[0].draw();
-
-if (newTime - lastTime > 1000)
-  ghostContainer[1].draw();
-
-if (newTime - lastTime > 3000)
-  ghostContainer[2].draw();
-
-if (newTime - lastTime > 5000)
-  ghostContainer[3].draw();
-
-  // After 3 seconds
-  /*if (newTime - lastTime > 3000)
-    ghostContainer[2].draw();
-
-  // After 6 seconds
-  if (newTime - lastTime > 6000)
-    ghostContainer[3].draw();*/
+  for(var i = 0; i < ghostContainer.length; ++i){
+    ghostContainer[i].draw();
+  }
 
   // next animation
   if (map.end < 1) {
@@ -176,20 +146,14 @@ if (newTime - lastTime > 5000)
         if(ghostContainer[i].eatable){
           pacman.score += 200;
 
-          ghostContainer[i].x = 152;
-          ghostContainer[i].y = 136;
-
-          ghostContainer[i].eatable = false;
+          ghostContainer[i].reset();
         } else {
           // Lost life
           pacman.life--;
-          // reset position
-          pacman.x = 152;
-          pacman.y = 264;
+          pacman.resetPosition();
 
           for(var i = 0; i < ghostContainer.length; ++i){
-            ghostContainer[i].x = 152;
-            ghostContainer[i].y = 136;
+            ghostContainer[i].reset();
           }
         }
       }
@@ -197,6 +161,19 @@ if (newTime - lastTime > 5000)
     }
   }
 
+    //draw targets (test)
+    /*context.fillStyle = "red";
+    context.fillRect(ghostContainer[0].getTarget()[1]*16, ghostContainer[0].getTarget()[0]*16, 5, 5);
+
+    context.fillStyle = "pink";
+    context.fillRect(ghostContainer[1].getTarget()[1]*16, ghostContainer[1].getTarget()[0]*16, 5, 5);
+
+    context.fillStyle = "cyan";
+    context.fillRect(ghostContainer[2].getTarget()[1]*16, ghostContainer[2].getTarget()[0]*16, 5, 5);
+
+    context.fillStyle = "orange";
+    context.fillRect(ghostContainer[3].getTarget()[1]*16, ghostContainer[3].getTarget()[0]*16, 5, 5);
+    */
 }
 
 // function called when user press key with keyboard

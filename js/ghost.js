@@ -3,18 +3,20 @@ const RIGHT = 2;
 const UP = 3;
 const DOWN = 4;
 
-function Ghost(color)
+function Ghost(color, _x, _y, _idleTime)
 {
-    Creature.call(this, 152, 136, 2);
+    Creature.call(this, _x, _y, 2);
     this.color = color;
     this.score = 0;
     this.eatable = false;
-    this.mode = true;
+    this.mode = "idle";
     this.direction = 1;
     this.image = new Image();
     this.imageSrcGhost = "";
-    this.token = 1;
+    this.token = 0;
     this.target = [10, 10];
+
+    this.idleTime = _idleTime;
 };
 
 Ghost.prototype = Object.create(Creature.prototype);
@@ -22,23 +24,45 @@ Ghost.prototype.constructor = Ghost;
 
 
 
+Ghost.prototype.reset = function(){
+    console.log("res");
+    this.resetPosition();
+    this.setMode("idle");
+    this.token = 0;
+    this.makeNotEatable();
+
+    window.setTimeout(function(){
+        this.setMode("leave");
+    }.bind(this), 1000 * this.idleTime);
+};
+
 Ghost.prototype.makeEatable = function(){
+    this.image.src = "img/eatable_ghost.png";
     this.eatable = true;
+};
+
+Ghost.prototype.makeNotEatable = function(){
+    this.image.src = this.imageSrcGhost;
+    this.eatable = false;
 };
 
 Ghost.prototype.goFrightened = function(){
     this.makeEatable();
 
     var lastMode = this.getMode();
+    if(lastMode == "idle" || lastMode == "leave"){
+        lastMode = "scatter";
+    }
+
     this.setMode("frightened");
     this.image.src = "img/eatable_ghost.png";
 
-    setTimeout(function(){ this.image.src = this.imageSrcGhost; }.bind(this), 8000);
-    setTimeout(function(){ this.image.src = "img/eatable_ghost.png"; }.bind(this), 8500);
-    setTimeout(function(){ this.image.src = this.imageSrcGhost; }.bind(this), 9000);
-    setTimeout(function(){ this.image.src = "img/eatable_ghost.png"; }.bind(this), 9500);
+    setTimeout(function(){ if(this.eatable) this.image.src = this.imageSrcGhost; }.bind(this), 8000);
+    setTimeout(function(){ if(this.eatable) this.image.src = "img/eatable_ghost.png"; }.bind(this), 8500);
+    setTimeout(function(){ if(this.eatable) this.image.src = this.imageSrcGhost; }.bind(this), 9000);
+    setTimeout(function(){ if(this.eatable) this.image.src = "img/eatable_ghost.png"; }.bind(this), 9500);
     setTimeout(function(){
-        this.image.src = this.imageSrcGhost;
+        this.makeNotEatable();
         this.setMode(lastMode);
         runModeChanger();
     }.bind(this), 10000);
@@ -49,11 +73,12 @@ Ghost.prototype.getMode = function(){
 };
 
 Ghost.prototype.setMode = function(mode){
-    //console.log(mode);
     this.mode = mode;
 };
 
 Ghost.prototype.initialise = function(){
+    this.reset();
+
     if (this.color == "blue")
         this.imageSrcGhost = "img/blue_ghost.png";
     else if (this.color == "pink")
@@ -96,7 +121,12 @@ Ghost.prototype.getTarget = function(){
 };
 
 Ghost.prototype.getTileInfo = function(_y, _x, _token){
-    if(map.getMapValue(_y, _x) == 1 || map.getMapValue(_y, _x) == 5){
+    if(map.getMapValue(_y, _x) == 1){
+        return null;
+    }
+
+    //Ghost House
+    if(_token == DOWN && map.getMapValue(_y, _x) == 5){
         return null;
     }
 
@@ -108,10 +138,10 @@ Ghost.prototype.getTileInfo = function(_y, _x, _token){
     };
 };
 
-Ghost.prototype.getSurroundingTiles = function(){
+Ghost.prototype.getSurroundingTiles = function(token){
     var tiles = [];
 
-    switch(this.token){
+    switch(token){
     case LEFT:
         tiles.push(this.getTileInfo(this.getPositionY()-1, this.getPositionX(), UP));
         tiles.push(this.getTileInfo(this.getPositionY()+1, this.getPositionX(), DOWN));
@@ -138,7 +168,7 @@ Ghost.prototype.getSurroundingTiles = function(){
 };
 
 Ghost.prototype.chooseNextStepCloseToTarget = function(){
-    var tiles = this.getSurroundingTiles();
+    var tiles = this.getSurroundingTiles(this.token);
 
     var min = Infinity;
     var nextToken = 0;
@@ -154,11 +184,41 @@ Ghost.prototype.chooseNextStepCloseToTarget = function(){
     return nextToken;
 };
 
+Ghost.prototype.checkGhostHouseTargets = function(){
+    if(this.getPositionX() == 9 && this.getPositionY() == 10){
+        this.token = 3;
+        this.target = [8, 9];
+
+    } else if(this.getPositionX() == 8 && this.getPositionY() == 10){
+        this.token = 2;
+        this.target = [10, 9];
+
+    } else if(this.getPositionX() == 10 && this.getPositionY() == 10){
+        this.token = 1;
+        this.target = [10, 9];
+
+    } else if(this.getPositionX() == 9 && this.getPositionY() == 8){
+        this.token = 1;
+        this.target = [8, 6];
+        this.setMode("scatter");
+
+    }
+};
+
 Ghost.prototype.move = function(){
     this.checkForTeleport();
 
+    if(this.getMode() == "idle"){
+        return 0;
+    }
+
     if((this.x%map.squareSize - map.squareSize/2 == 0) && (this.y%map.squareSize - map.squareSize/2 == 0)){
-        this.chooseTarget();
+        if(this.getMode() == "leave"){
+            this.checkGhostHouseTargets();
+        } else {
+            this.chooseTarget();
+        }
+
         this.token = this.chooseNextStepCloseToTarget();
     }
 
@@ -171,28 +231,9 @@ Ghost.prototype.move = function(){
     } else if (this.token == DOWN) {
         this.y += this.speed;
     }
-
-
 };
 
 Ghost.prototype.draw = function(){
     this.move();
-
-    //context.beginPath();
-    /*if (this.eatable) {
-        if (newTime - lastTimeEatable < 8000)
-            this.image.src = "img/eatable_ghost.png";
-        else if ((newTime - lastTimeEatable) % 1000 < 500 && newTime - lastTimeEatable < 10000)
-            this.image.src = this.imageSrcGhost;
-        else if ((newTime - lastTimeEatable) % 1000 > 500 && newTime - lastTimeEatable < 10000)
-            this.image.src = "img/eatable_ghost.png";
-        else {
-            this.eatable = false;
-            this.image.src = this.imageSrcGhost;
-        }
-    } else {
-        this.image.src = this.imageSrcGhost;
-    }*/
-
     context.drawImage(this.image, this.x-this.size, this.y-this.size, this.size*2, this.size*2);
 };

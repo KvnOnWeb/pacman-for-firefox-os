@@ -1,5 +1,5 @@
-function Pacman() {
-    Creature.call(this, 152, 264, 2);
+function Pacman(_x, _y) {
+    Creature.call(this, _x, _y, 2);
 
     this.score = 0;
     this.life = 3;
@@ -75,17 +75,17 @@ Pacman.prototype.askForDirection = function(){
         this.token = this.lastToken = 1;
 
         return true;
-    } else if (this.getNextDirection() == "right" && map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
+    } else if (this.getNextDirection() == "right" && map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()+1) != 5) {
         this.x += this.speed;
         this.token = this.lastToken = 2;
 
         return true;
-    } else if(this.getNextDirection() == "up" && map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
+    } else if(this.getNextDirection() == "up" && map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY()-1, this.getPositionX()) != 5) {
         this.y -= this.speed;
         this.token = this.lastToken = 3;
 
         return true;
-    } else if (this.getNextDirection() == "down" && map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY(), this.getPositionX()-1) != 5) {
+    } else if (this.getNextDirection() == "down" && map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 1 && map.getMapValue(this.getPositionY()+1, this.getPositionX()) != 5) {
         this.y += this.speed;
         this.token = this.lastToken = 4;
 
@@ -211,4 +211,4 @@ Pacman.prototype.draw = function() {
         return this.lastFPS;
     }*/
 
-var pacman = new Pacman();
+var pacman = new Pacman(152, 264);
