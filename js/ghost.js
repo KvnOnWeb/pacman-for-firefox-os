@@ -1,146 +1,239 @@
-function Ghost(color)
+const LEFT = 1;
+const RIGHT = 2;
+const UP = 3;
+const DOWN = 4;
+
+function Ghost(color, _x, _y, _idleTime)
 {
-	this.x = 152;
-    this.y = 168;
-    this.size = 8;
+    Creature.call(this, _x, _y, 2);
     this.color = color;
-    this.speed = 2;
     this.score = 0;
     this.eatable = false;
+    this.mode = "idle";
     this.direction = 1;
-    this.directionTab = ["left", "right", "top", "bottom"];
     this.image = new Image();
     this.imageSrcGhost = "";
-    this.lastDirection = "";
-    this.askDirection = "";
     this.token = 0;
-    this.getX = function() {
-        return this.x;
-    };
-    this.getY = function() {
-        return this.y;
-    };
-    this.getPositionX = function() {
-        diameter = 2 * this.size;
-        posX = Math.round(this.x/diameter)-1; // Array start to 0
+    this.target = [10, 10];
 
-        return posX;
-    };
-    this.getPositionY = function() {
-        diameter = 2 * this.size;
-        posY = Math.round(this.y/diameter)-1; // Array start to 0
+    this.idleTime = _idleTime;
+};
 
-        return posY;
-    };
-    this.initialise = function(){
-    	if (this.color == "blue")
-        	this.imageSrcGhost = "img/blue_ghost.png";
-        else if (this.color == "pink")
-        	this.imageSrcGhost = "img/pink_ghost.png";
-        else if (this.color == "red")
-        	this.imageSrcGhost = "img/red_ghost.png";
-        else if (this.color == "orange")
-        	this.imageSrcGhost = "img/orange_ghost.png";
+Ghost.prototype = Object.create(Creature.prototype);
+Ghost.prototype.constructor = Ghost;
 
-        this.image.src = this.imageSrcGhost;
+
+
+Ghost.prototype.reset = function(){
+    console.log("res");
+    this.resetPosition();
+    this.setMode("idle");
+    this.token = 0;
+    this.makeNotEatable();
+
+    window.setTimeout(function(){
+        this.setMode("leave");
+    }.bind(this), 1000 * this.idleTime);
+};
+
+Ghost.prototype.makeEatable = function(){
+    this.image.src = "img/eatable_ghost.png";
+    this.eatable = true;
+};
+
+Ghost.prototype.makeNotEatable = function(){
+    this.image.src = this.imageSrcGhost;
+    this.eatable = false;
+};
+
+Ghost.prototype.goFrightened = function(){
+    this.makeEatable();
+
+    var lastMode = this.getMode();
+    if(lastMode == "idle" || lastMode == "leave"){
+        lastMode = "scatter";
+    }
+
+    this.setMode("frightened");
+    this.image.src = "img/eatable_ghost.png";
+
+    setTimeout(function(){ if(this.eatable) this.image.src = this.imageSrcGhost; }.bind(this), 8000);
+    setTimeout(function(){ if(this.eatable) this.image.src = "img/eatable_ghost.png"; }.bind(this), 8500);
+    setTimeout(function(){ if(this.eatable) this.image.src = this.imageSrcGhost; }.bind(this), 9000);
+    setTimeout(function(){ if(this.eatable) this.image.src = "img/eatable_ghost.png"; }.bind(this), 9500);
+    setTimeout(function(){
+        this.makeNotEatable();
+        this.setMode(lastMode);
+        runModeChanger();
+    }.bind(this), 10000);
+};
+
+Ghost.prototype.getMode = function(){
+    return this.mode;
+};
+
+Ghost.prototype.setMode = function(mode){
+    this.mode = mode;
+};
+
+Ghost.prototype.initialise = function(){
+    this.reset();
+
+    if (this.color == "blue")
+        this.imageSrcGhost = "img/blue_ghost.png";
+    else if (this.color == "pink")
+        this.imageSrcGhost = "img/pink_ghost.png";
+    else if (this.color == "red")
+        this.imageSrcGhost = "img/red_ghost.png";
+    else if (this.color == "orange")
+        this.imageSrcGhost = "img/orange_ghost.png";
+
+    this.image.src = this.imageSrcGhost;
+};
+
+Ghost.prototype.chooseRandomTarget = function(){
+    var randInt = Math.floor(Math.random()*4);
+    switch(randInt){
+    case 0:
+        this.target = [0, 0];
+        break;
+    case 1:
+        this.target = [map.lines, 0];
+        break;
+    case 2:
+        this.target = [0, map.columns];
+        break;
+    case 3:
+        this.target = [map.lines, map.columns];
+        break;
+    }
+};
+
+Ghost.prototype.getDistanceToTarget = function(_y, _x){
+    var a = Math.abs(_y - this.getTarget()[0]);
+    var b = Math.abs(_x - this.getTarget()[1]);
+
+    return Math.sqrt(a*a + b*b);
+};
+
+Ghost.prototype.getTarget = function(){
+    return this.target;
+};
+
+Ghost.prototype.getTileInfo = function(_y, _x, _token){
+    if(map.getMapValue(_y, _x) == 1){
+        return null;
+    }
+
+    //Ghost House
+    if(_token == DOWN && map.getMapValue(_y, _x) == 5){
+        return null;
+    }
+
+    return {
+        y: _y,
+        x: _x,
+        token: _token,
+        dist: this.getDistanceToTarget(_y, _x)
     };
-    
-    this.draw = function () {
-        // teleport to right
-        if (this.getPositionX() < 1 && this.lastDirection == "left") {
-            this.x = 280;
-            this.y = 168;
+};
+
+Ghost.prototype.getSurroundingTiles = function(token){
+    var tiles = [];
+
+    switch(token){
+    case LEFT:
+        tiles.push(this.getTileInfo(this.getPositionY()-1, this.getPositionX(), UP));
+        tiles.push(this.getTileInfo(this.getPositionY()+1, this.getPositionX(), DOWN));
+        tiles.push(this.getTileInfo(this.getPositionY(), this.getPositionX()-1, LEFT));
+        break;
+    case RIGHT:
+        tiles.push(this.getTileInfo(this.getPositionY()-1, this.getPositionX(), UP));
+        tiles.push(this.getTileInfo(this.getPositionY(), this.getPositionX()+1, RIGHT));
+        tiles.push(this.getTileInfo(this.getPositionY()+1, this.getPositionX(), DOWN));
+        break;
+    case UP:
+        tiles.push(this.getTileInfo(this.getPositionY()-1, this.getPositionX(), UP));
+        tiles.push(this.getTileInfo(this.getPositionY(), this.getPositionX()+1, RIGHT));
+        tiles.push(this.getTileInfo(this.getPositionY(), this.getPositionX()-1, LEFT));
+        break;
+    case DOWN:
+        tiles.push(this.getTileInfo(this.getPositionY(), this.getPositionX()+1, RIGHT));
+        tiles.push(this.getTileInfo(this.getPositionY()+1, this.getPositionX(), DOWN));
+        tiles.push(this.getTileInfo(this.getPositionY(), this.getPositionX()-1, LEFT));
+        break;
+    }
+
+    return tiles;
+};
+
+Ghost.prototype.chooseNextStepCloseToTarget = function(){
+    var tiles = this.getSurroundingTiles(this.token);
+
+    var min = Infinity;
+    var nextToken = 0;
+    for(var i = 0; i<tiles.length; ++i){
+        if(tiles[i]){
+            if(tiles[i].dist < min){
+                min = tiles[i].dist;
+                nextToken = tiles[i].token;
+            }
         }
+    }
 
-        // teleport to left
-        if (this.getPositionX() > 19 && this.lastDirection == "right") {
-            this.x = 0;
-            this.y = 168;
-        }
+    return nextToken;
+};
 
-        if (this.lastDirection == "") {
-            this.lastDirection = this.askDirection;
-        }
+Ghost.prototype.checkGhostHouseTargets = function(){
+    if(this.getPositionX() == 9 && this.getPositionY() == 10){
+        this.token = 3;
+        this.target = [8, 9];
 
-        if (this.mouthOpenValue <= 0)
-            this.mouthPosition = 1;
-        else if (this.mouthOpenValue >= 40)
-            this.mouthPosition = -1;
+    } else if(this.getPositionX() == 8 && this.getPositionY() == 10){
+        this.token = 2;
+        this.target = [10, 9];
 
-        // Change direction coefficient
-        if (this.lastDirection == "left" || this.lastDirection == "top") {
-            this.direction = -1;
+    } else if(this.getPositionX() == 10 && this.getPositionY() == 10){
+        this.token = 1;
+        this.target = [10, 9];
+
+    } else if(this.getPositionX() == 9 && this.getPositionY() == 8){
+        this.token = 1;
+        this.target = [8, 6];
+        this.setMode("scatter");
+
+    }
+};
+
+Ghost.prototype.move = function(){
+    this.checkForTeleport();
+
+    if(this.getMode() == "idle"){
+        return 0;
+    }
+
+    if((this.x%map.squareSize - map.squareSize/2 == 0) && (this.y%map.squareSize - map.squareSize/2 == 0)){
+        if(this.getMode() == "leave"){
+            this.checkGhostHouseTargets();
         } else {
-            this.direction = 1;
+            this.chooseTarget();
         }
 
-        if (this.token == 1) { // left
-            if ((this.x%(this.size*2))-this.size != 0) {
-                this.x += (this.speed * this.direction);
-            } else {
-                this.token = 0;
-            }
-        } else if (this.token == 2) { // right
-            if ((this.x%(this.size*2))-this.size != 0) {
-                this.x += (this.speed * this.direction);
-            } else {
-                this.token = 0;
-            }
-        } else if (this.token == 3) { // top
-            if ((this.y%(this.size*2))-this.size != 0) {
-                this.y += (this.speed * this.direction);
-            } else {
-                this.token = 0;
-            }
-        } else if (this.token == 4) { // bottom
-            if ((this.y%(this.size*2))-this.size != 0) {
-                this.y += (this.speed * this.direction);
-            } else {
-                this.token = 0;
-            }
-        } else {
-            randomNumber = Math.floor((Math.random()*4));
-            this.askDirection = this.directionTab[randomNumber];
-            this.lastDirection = this.askDirection;
-            if(this.askDirection == "left" && map.grid[this.getPositionY()][this.getPositionX()-1] != 1){
-                this.x += (this.speed * this.direction);
-                this.token = 1;
-            } else if (this.askDirection == "right" && map.grid[this.getPositionY()][this.getPositionX()+1] != 1) {
-                this.x += (this.speed * this.direction);
-                this.token = 2;
-            }
-            else if(this.askDirection == "top" && map.grid[this.getPositionY()-1][this.getPositionX()] != 1) {
-                this.y += (this.speed * this.direction);
-                this.token = 3;
-            } else if (this.askDirection == "bottom" && map.grid[this.getPositionY()+1][this.getPositionX()] != 1 && map.grid[this.getPositionY()+1][this.getPositionX()] != 5) {
-                this.y += (this.speed * this.direction);
-                this.token = 4;
-            }
-        }
+        this.token = this.chooseNextStepCloseToTarget();
+    }
 
-        this.mouthOpenValue += (5 * this.mouthPosition);
+    if (this.token == LEFT) {
+        this.x -= this.speed;
+    } else if (this.token == RIGHT) {
+        this.x += this.speed;
+    } else if (this.token == UP) {
+        this.y -= this.speed;
+    } else if (this.token == DOWN) {
+        this.y += this.speed;
+    }
+};
 
-        //context.beginPath();
-        if (this.eatable) {
-            if (newTime - lastTimeEatable < 8000)
-                this.image.src = "img/eatable_ghost.png";
-            else if ((newTime - lastTimeEatable) % 1000 < 500 && newTime - lastTimeEatable < 10000)
-                this.image.src = this.imageSrcGhost;
-            else if ((newTime - lastTimeEatable) % 1000 > 500 && newTime - lastTimeEatable < 10000)
-                this.image.src = "img/eatable_ghost.png";
-            else {
-                this.eatable = false;
-                this.image.src = this.imageSrcGhost;
-            }
-        } else {
-            this.image.src = this.imageSrcGhost;
-        }
-
-        context.drawImage(this.image, this.x-this.size, this.y-this.size, this.size*2, this.size*2);
-
-        if (this.y == 168 ) {
-            this.y = 136;
-        }
-        
-    };
-}
+Ghost.prototype.draw = function(){
+    this.move();
+    context.drawImage(this.image, this.x-this.size, this.y-this.size, this.size*2, this.size*2);
+};
